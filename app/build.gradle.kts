@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -26,6 +27,22 @@ android {
             )
         }
     }
+    buildFeatures {
+
+        viewBinding = true
+    }
+
+    packaging {
+
+        resources {
+
+            excludes += setOf(
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE-notice.md"
+            )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -37,12 +54,46 @@ android {
 
 dependencies {
 
+    implementation(project(":di"))
+    implementation(project(":datasources:database"))
+    implementation(project(":datasources:database:dao"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:common"))
+    implementation(project(":features:songs:domain"))
+    implementation(project(":features:songs:presentation"))
+    implementation(project(":features:playlists:domain"))
+    implementation(project(":features:playlists:presentation"))
+    implementation(project(":features:musicsource:domain"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.media3.session)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.dash)
+
+    implementation(libs.gson)
+
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+
+    implementation(libs.androidx.room)
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+
+    testImplementation(kotlin("test"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.io.mockk)
+    androidTestImplementation(libs.io.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.io.insert.koin)
 }

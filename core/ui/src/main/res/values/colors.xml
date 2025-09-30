@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="transparent">#00FFFFFF</color>
+
+    <color name="primary">#E9502D</color>
+    <color name="primary_night">#046CC9</color>
+
+    <color name="primary_variant">#A2371F</color>
+    <color name="primary_variant_night">#024D90</color>
+
+    <color name="secondary">#F37731</color>
+    <color name="secondary_night">#0B87CF</color>
+
+    <color name="secondary_variant">#D1662A</color>
+    <color name="secondary_variant_night">#0971AD</color>
+
+    <color name="tertiary">#FA9337</color>
+    <color name="tertiary_night">#14AED2</color>
+
+    <color name="tertiary_variant">#F89C49</color>
+    <color name="tertiary_variant_night">#28B1D1</color>
+
+    <color name="color_on_surface">#664040</color>
+    <color name="color_on_surface_night">#405466</color>
+
+    <color name="color_surface_container">#F7F1ED</color>
+    <color name="color_surface_container_night">#EDF2F7</color>
+
+    <color name="color_secondary_container">#F8E8DE</color>
+    <color name="color_secondary_container_night">#DEEBF8</color>
+
+    <color name="color_on_secondary_container">#584B44</color>
+    <color name="color_on_secondary_container_night">#445158</color>
+
+    <color name="color_surface_container_low_light">#FAF6F2</color>
+
+    <color name="color_surface_container_low_night">#201D1B</color>
+
+    <color name="color_outline">#7E7774</color>
+    <color name="color_outline_night">#74797E</color>
+
+    <color name="default_song_recycler_view_item_color">#43423836</color>
+
+    <color name="default_header_background_color">#80492D27</color>
+
+    <color name="light_color_inverse_surface">#F7F2ED</color>
+
+    <color name="night_color_inverse_surface">#2F3235</color>
+
+    <color name="light_title_text_color">#642D11</color>
+    <color name="night_title_text_color">#DEEEF8</color>
+
+</resources>

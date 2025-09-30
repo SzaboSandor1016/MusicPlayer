@@ -1,0 +1,54 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.MusicPlayer" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_variant</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+
+        <item name="colorOnSurfaceVariant">@color/color_on_surface</item>
+
+        <item name="colorSurfaceContainer">@color/color_surface_container</item>
+
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container</item>
+
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_night</item>
+
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container</item>
+
+        <item name="colorSecondaryContainer">@color/color_secondary_container</item>
+
+        <item name="colorOutline">@color/color_outline</item>
+
+        <item name="colorSurfaceInverse">@color/night_color_inverse_surface</item>
+
+        <item name="song_options_style_attribute">@style/Widget.Material3.Button.TextButton</item>
+    </style>
+
+    <color name="equalizer_background_color">@color/color_surface_container_low_night</color>
+
+    <color  name="playlist_item_bottom_cover">@color/color_outline</color>
+
+    <color name="played_music_note">@color/night_title_text_color</color>
+
+    <style name="Widget.Material3.Button.IconButton.0" parent="Widget.Material3.Button.IconButton">
+
+        <item name="iconTint">@color/color_surface_container</item>
+    </style>
+
+    <style name="Widget.Material3.Button.TextButton.0" parent="Widget.Material3.Button.TextButton">
+
+        <item name="iconTint">@color/color_surface_container</item>
+        <item name="android:textColor">@color/color_surface_container</item>
+        <item name="iconSize">20dp</item>
+        <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+</resources>

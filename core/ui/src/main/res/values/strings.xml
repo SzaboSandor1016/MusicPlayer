@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">MusicPlayer</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="create_playlist">Create playlist</string>
+    <string name="choose_playlist_name">Choose a name for the new playlist</string>
+    <string name="choose_playlist">Choose a playlist</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="song_s">song(s)</string>
+    <string name="song_already_contained">This song is already contained by this playlist</string>
+    <string name="nothing">Default message</string>
+    <string name="remove_from_playlist">Remove from playlist</string>
+    <string name="search">Search</string>
+    <string name="add_to_next_up">Add to Up Next</string>
+    <string name="add_to_queue">Add to queue</string>
+    <string name="up_next">Up next</string>
+    <string name="favorites">Favorites</string>
+    <string name="recent">Recently added</string>
+    <string name="new_playlist">New playlist</string>
+    <string name="remove_from_queue">Remove from queue</string>
+    <string name="unknown_artist">Unknown artist</string>
+    <string name="created_automatically">Created automatically</string>
+    <string name="all_playlists">All playlists</string>
+    <string name="delete_playlist">Delete playlist</string>
+    <string name="all_songs">All songs</string>
+    <string name="playlists">Playlists</string>
+    <string name="equalizer_on_off">Equalizer on/off</string>
+</resources>

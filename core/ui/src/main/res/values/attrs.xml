@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GradientBackgroundView">
+        <!-- Gradient colors -->
+        <attr name="startColor" format="color|reference" />
+        <attr name="centerColor" format="color|reference" />
+        <attr name="endColor" format="color|reference" />
+
+        <!-- Corner radius -->
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
+
+    <attr name="song_options_style_attribute" format="reference"/>
+</resources>

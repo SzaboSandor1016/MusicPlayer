@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MusicPlayer</string>
+    <string name="cancel">Vissza</string>
+    <string name="ok">OK</string>
+    <string name="create_playlist">Új lejátszási lista</string>
+    <string name="choose_playlist_name">Adj egy nevet a lejátszási listának</string>
+    <string name="choose_playlist">Válassz egy lejátszási listát</string>
+    <string name="add_to_playlist">Hozzáadás lejátszási listához</string>
+    <string name="song_s">dal</string>
+    <string name="song_already_contained">Ez a szám már rajta van ezen a listán</string>
+    <string name="nothing">Semmi</string>
+    <string name="remove_from_playlist">Eltávolítás lejátszási listáról</string>
+    <string name="search">Keresés</string>
+    <string name="add_to_next_up">Beállítás következőnek</string>
+    <string name="add_to_queue">Hozzáadás lejátszási sorhoz</string>
+    <string name="up_next">Következő</string>
+    <string name="favorites">Kedvencek</string>
+    <string name="recent">Nemrég hozzáadva</string>
+    <string name="new_playlist">Új lejátszás lista</string>
+    <string name="remove_from_queue">Eltávolítás a lejátszási sorból</string>
+    <string name="unknown_artist">Ismeretlen előadó</string>
+    <string name="created_automatically">Automatikusan létrehozva</string>
+    <string name="all_playlists">Összes lejátszási lista</string>
+    <string name="delete_playlist">Lejátszási lista törlése</string>
+    <string name="all_songs">Összes dal</string>
+    <string name="playlists">Lejátszási listák</string>
+    <string name="equalizer_on_off">Hangkeverő be/ki</string>
+</resources>

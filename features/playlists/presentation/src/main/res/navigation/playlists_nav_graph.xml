@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playlists_nav_graph"
+    app:startDestination="@id/fragmentPlaylists">
+
+    <fragment
+        android:id="@+id/fragmentPlaylists"
+        android:name="com.example.features.playlists.presentation.fragment.FragmentPlaylists"
+        android:label="fragment_playlists"
+        tools:layout="@layout/fragment_playlists">
+        <deepLink
+            android:id="@+id/deepLink_playlists"
+            app:uri="android-app://features/playlists" />
+    </fragment>
+</navigation>

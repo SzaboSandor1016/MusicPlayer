@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/played_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:src="@drawable/ic_animated_music_note_single_36"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/up_next"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:text="@string/up_next"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:visibility="gone"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/song_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/played_icon"
+        app:layout_constraintTop_toBottomOf="@id/up_next"
+        app:layout_constraintRight_toLeftOf="@id/more"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:text="placeholder song title"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="6dp"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/song_artist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="160dp"
+        app:layout_constraintTop_toBottomOf="@id/song_title"
+        app:layout_constraintLeft_toRightOf="@id/played_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:text="placeholder artist"
+        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:textSize="16sp"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/song_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/more"
+        android:text="placeholder duration"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="8dp"
+        android:textSize="16sp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/Widget.Material3.Button.IconButton"
+        app:icon="@drawable/ic_more_24"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
