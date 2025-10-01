@@ -571,8 +571,6 @@ class MainActivity : AppCompatActivity() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
 
-                val index = mediaController?.currentMediaItemIndex
-
                 mediaItem?.let {
                     viewModelMain.checkIfSongIsContainedInFavorites(mediaItem.mediaId.toLong())
 
@@ -583,7 +581,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                index?.let { viewModelMain.setCurrentIndexPreference(it) }
+                setCurrentIndexPreference()
 
                 syncControllerSongsWithRecyclerView(mediaController?.currentTimeline)
 
@@ -675,52 +673,62 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addSongToUpNext(mediaItem: MediaItem) {
-        val controller = mediaController?: return
 
-        val mediaItems = getMediaItems()
+        mediaController?.let { controller ->
 
-        val currentIndex = mediaController?.currentMediaItemIndex ?: 0
+            val mediaItems = getMediaItems()
 
-        val lastUpNextId = viewModelMain.getLastIdOfUpNexts()
+            val currentIndex = controller.currentMediaItemIndex
 
-        val lastUpNextIndex = lastUpNextId?.let {
-            mediaItems.indexOfFirst { it.mediaId.toLong() == lastUpNextId }
-        }?: currentIndex
+            val lastUpNextId = viewModelMain.getLastIdOfUpNexts()
 
-        val existingIndex = mediaItems.indexOfFirst { it.mediaId == mediaItem.mediaId }
+            val lastUpNextIndex = lastUpNextId?.let {
+                mediaItems.indexOfFirst { it.mediaId.toLong() == lastUpNextId }
+            } ?: currentIndex
 
-        if (existingIndex != -1) {
+            val existingIndex = mediaItems.indexOfFirst { it.mediaId == mediaItem.mediaId }
 
-            controller.moveMediaItem(existingIndex, lastUpNextIndex + 1)
+            if (existingIndex != -1) {
 
-        } else {
+                controller.moveMediaItem(existingIndex, lastUpNextIndex + 1)
 
-            controller.addMediaItem(
-                lastUpNextIndex + 1,
-                mediaItem
-            )
+            } else {
+
+                controller.addMediaItem(
+                    lastUpNextIndex + 1,
+                    mediaItem
+                )
+            }
+
+            viewModelMain.addToUpNext(mediaItem.mediaId.toLong())
         }
-
-        viewModelMain.addToUpNext(mediaItem.mediaId.toLong())
     }
 
     private fun addSongToQueue(mediaItem: MediaItem) {
-        val controller = mediaController?: return
 
         val size = getMediaItems().size
 
-        controller.addMediaItem(size, mediaItem)
+        mediaController?.let {
 
-        setMediaIdsPreference()
+            it.addMediaItem(size, mediaItem)
+
+            setMediaIdsPreference()
+
+            setCurrentIndexPreference()
+        }
     }
 
     private fun removeSongFromQueue(indexOfRemoved: Int) {
-        val controller = mediaController?: return
 
-        if (controller.currentMediaItemIndex != indexOfRemoved)
-            controller.removeMediaItem(indexOfRemoved)
+        mediaController?.let { controller ->
 
-        setMediaIdsPreference()
+            if (controller.currentMediaItemIndex != indexOfRemoved)
+                controller.removeMediaItem(indexOfRemoved)
+
+            setMediaIdsPreference()
+
+            setCurrentIndexPreference()
+        }
     }
 
     private fun setMediaIdsPreference() {
@@ -729,38 +737,46 @@ class MainActivity : AppCompatActivity() {
         viewModelMain.setMediaIdsPreference(mediaItems)
     }
 
+    private fun setCurrentIndexPreference() {
+
+        val index = mediaController?.currentMediaItemIndex
+
+        index?.let { viewModelMain.setCurrentIndexPreference(it) }
+    }
+
     private fun updateSource(musicSource: MusicSourceMainPresentationModel.MusicSource) {
 
-        val controller = mediaController ?: return
+        mediaController?.let { controller ->
 
-        val newIds = musicSource.songs.map { it.mediaId }
-        val currentIds = getMediaItems().map { it.mediaId }
+            val newIds = musicSource.songs.map { it.mediaId }
+            val currentIds = getMediaItems().map { it.mediaId }
 
-        val shouldUpdate =
-            newIds != currentIds || userSelected
+            val shouldUpdate =
+                newIds != currentIds || userSelected
 
-        if (shouldUpdate) {
+            if (shouldUpdate) {
 
-            try {
-                controller.setMediaItems(
-                    musicSource.songs,
-                    musicSource.selectedIndex,
-                    musicSource.position
-                )
-            } catch (e: Exception) {
-                controller.setMediaItems(
-                    musicSource.songs,
-                    0,
-                    0
-                )
+                try {
+                    controller.setMediaItems(
+                        musicSource.songs,
+                        musicSource.selectedIndex,
+                        musicSource.position
+                    )
+                } catch (e: Exception) {
+                    controller.setMediaItems(
+                        musicSource.songs,
+                        0,
+                        0
+                    )
+                }
             }
+
+            //controller.playWhenReady = userSelected
+
+            updateTitleSeekBarAndProgressString(controller.currentMediaItem)
+
+            userSelected = false
         }
-
-        //controller.playWhenReady = userSelected
-
-        updateTitleSeekBarAndProgressString(controller.currentMediaItem)
-
-        userSelected = false
     }
 
     fun updateSourceFromReorder(currentIndex: Int, targetIndex: Int) {
@@ -772,9 +788,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun reSyncControllerWithUI() {
 
-        val controller = mediaController
-
-        if (controller!= null) {
+        mediaController?.let { controller ->
 
             updateTitleSeekBarAndProgressString(controller.currentMediaItem)
 
@@ -808,13 +822,6 @@ class MainActivity : AppCompatActivity() {
                         i == currentIndex,
                         i in upNextIndexes
                     )
-                    /*SongMainPresentationModel(
-                        id = item.mediaId.toLong(),
-                        name = item.mediaMetadata.title.toString(),
-                        duration = item.mediaMetadata.durationMs?.toInt() ?: 0,
-                        author = item.mediaMetadata.artist.toString(),
-                        current = item == mediaController?.currentMediaItem
-                    )*/
                 )
             }
 
@@ -905,13 +912,16 @@ class MainActivity : AppCompatActivity() {
 
         progressJob = lifecycleScope.launch {
 
-            val controller = mediaController
+            var duration: Int = 0
 
-            val duration = if (controller != null)
-                controller.currentMediaItem?.mediaMetadata?.durationMs?.toInt()?.div(1000)?: 0
-            else 0
+            mediaController?.let { controller ->
 
-            binding.seekBar.max = duration
+                duration = controller.currentMediaItem?.mediaMetadata?.durationMs?.toInt()?.div(1000)?: 0
+
+                binding.seekBar.max = duration
+            }
+
+
 
             /*if (songs.isNotEmpty()) {
 

@@ -1,5 +1,6 @@
 package com.example.features.playlists.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.common.values.FAVORITES_ID
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -53,6 +55,8 @@ class ViewModelPlaylists(
 
     val autoPlaylistsState: StateFlow<List<PlaylistPlaylistsPresentationModel>> = _autoPlaylistsState.asStateFlow()*/
 
+    private val _selectedPlaylistIdState: MutableStateFlow<Long?> = MutableStateFlow(null)
+
     private val _selectedPlaylistState: MutableStateFlow<SelectedPlaylistPlaylistsPresentationModel> = MutableStateFlow(
         SelectedPlaylistPlaylistsPresentationModel.Default
     )
@@ -66,7 +70,7 @@ class ViewModelPlaylists(
     init {
 
 
-        viewModelScope. launch{
+        viewModelScope.launch {
             getAllPlaylistsFromRoomUseCase().map { playlists ->
 
                 playlists.map {
@@ -79,6 +83,42 @@ class ViewModelPlaylists(
                 _allPlaylistsState.update {
 
                     playlists
+                }
+            }
+        }
+
+        viewModelScope.launch {
+
+            combine(
+                _allPlaylistsState,
+                _selectedPlaylistIdState
+            ) { allPlaylists, selectedId ->
+
+                if (selectedId != null) {
+
+                    val playlist = allPlaylists.find { it.id == selectedId }
+
+                    if (playlist != null) {
+
+                        Log.d("playlist", "found")
+
+                        SelectedPlaylistPlaylistsPresentationModel.Selected(playlist)
+                    } else {
+
+                        Log.d("playlist", "not found")
+
+                        SelectedPlaylistPlaylistsPresentationModel.Default
+                    }
+                } else {
+                    SelectedPlaylistPlaylistsPresentationModel.Default
+                }
+
+            }
+            .flowOn(Dispatchers.IO)
+            .collect { selectedPlaylist ->
+
+                _selectedPlaylistState.update {
+                    selectedPlaylist
                 }
             }
         }
@@ -109,13 +149,18 @@ class ViewModelPlaylists(
 
         viewModelScope.launch {
 
-            _allPlaylistsState.value.find { it.id == playlistId}?.let { playlist ->
+            _selectedPlaylistIdState.update {
+
+                playlistId
+            }
+
+            /*_allPlaylistsState.value.find { it.id == playlistId}?.let { playlist ->
 
                 _selectedPlaylistState.update {
 
                     SelectedPlaylistPlaylistsPresentationModel.Selected(playlist)
                 }
-            }
+            }*/
         }
     }
 
@@ -123,9 +168,9 @@ class ViewModelPlaylists(
 
         viewModelScope.launch {
 
-            _selectedPlaylistState.update {
+            _selectedPlaylistIdState.update {
 
-                SelectedPlaylistPlaylistsPresentationModel.Default
+                null
             }
         }
     }

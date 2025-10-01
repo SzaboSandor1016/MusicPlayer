@@ -10,7 +10,7 @@ class GridDiff: DefaultDiff<GridItem>() {
         val oldItem = getOldItem(oldItemPosition) ?: return false
         val newItem = getNewItem(newItemPosition) ?: return false
 
-        return oldItem.id == newItem.id
+        return oldItem.id == newItem.id && oldItem.type == newItem.type
     }
 
     override fun areContentsTheSame(

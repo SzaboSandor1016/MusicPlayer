@@ -2,6 +2,7 @@ package com.example.features.playlists.presentation.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -275,6 +276,8 @@ class FragmentPlaylists : Fragment() {
                 viewModelPlaylists.allPlaylistsState.collect {
 
                     updatePlaylists(it)
+
+                    updateSelectablePlaylists(it)
                 }
             }
         }
@@ -291,11 +294,15 @@ class FragmentPlaylists : Fragment() {
 
                         is SelectedPlaylistPlaylistsPresentationModel.Default ->  {
 
+                            Log.d("playlist_fragment", "not selected")
+
                             handlePlaylistSelect(false)
 
                             setDefaultPlaylistInfo()
                         }
                         is SelectedPlaylistPlaylistsPresentationModel.Selected -> {
+
+                            Log.d("playlist_fragment", "selected")
 
                             handlePlaylistSelect(true)
 
@@ -407,6 +414,13 @@ class FragmentPlaylists : Fragment() {
 
         this.adapterAllPlaylists.notifyDataSetChanged()
     }*/
+
+    private fun updateSelectablePlaylists(playlists: List<PlaylistPlaylistsPresentationModel>) {
+
+        this.allPlaylists.clear()
+
+        this.allPlaylists.addAll(playlists.filter { it.id !in AUTO_PLAYLIST_IDS })
+    }
 
     private fun updatePlaylists(playlists: List<PlaylistPlaylistsPresentationModel>) {
 
