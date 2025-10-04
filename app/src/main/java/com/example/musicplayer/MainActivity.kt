@@ -29,7 +29,6 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.core.common.values.FAVORITES_ID
 import com.example.core.ui.PlaylistDialogHelper
 import com.example.core.ui.SongOptionsDialogHelper
 import com.example.musicplayer.adapter.AdapterCurrentSourceRecyclerView
@@ -51,7 +50,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
 
-    private val viewModelMain: ViewModelMain by inject<ViewModelMain>()
+    private val viewModelMain: ViewModelMain by viewModel<ViewModelMain>()
 
     private lateinit var binding: ActivityMainBinding
 
@@ -115,6 +114,8 @@ class MainActivity : AppCompatActivity() {
                     tryRestoreFromPreferences()
                     hasRestoredPrefs = true
                 }
+
+                restoreRepeatAndShuffleModeFromPreferences()
 
                 reSyncControllerWithUI()
             }
@@ -427,17 +428,34 @@ class MainActivity : AppCompatActivity() {
 
                 combine(
                     viewModelMain.isControllerCreated,
-                    viewModelMain.repeatMode,
                     viewModelMain.enableShuffle
-                ) { isCreated, repeatMode, shuffle ->
-                    Triple(isCreated, repeatMode, shuffle)
-                }.filter { it.first }.collect { (_, repeatMode, shuffle) ->
+                ) { isCreated, shuffle ->
+                    Pair(isCreated, shuffle)
+                }.filter { it.first }.collect { (_, shuffle) ->
+
+                    setShuffleFromSharedPreferences(shuffle)
+                    //updateShuffleIndicator(shuffle)
+
+                    Log.d("refresh_from_shared_prefs", "shuffle: $shuffle")
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                combine(
+                    viewModelMain.isControllerCreated,
+                    viewModelMain.repeatMode,
+                ) { isCreated, repeatMode ->
+                    Pair(isCreated, repeatMode)
+                }.filter { it.first }.collect { (_, repeatMode) ->
 
                     setRepeatModeFromSharedPrefs(repeatMode)
-                    updateRepeatModeIndicator(repeatMode)
+                    //updateRepeatModeIndicator(repeatMode)
 
-                    setShuffle(shuffle)
-                    updateShuffleIndicator(shuffle)
+                    Log.d("refresh_from_shared_prefs", "repeatMode: $repeatMode")
                 }
             }
         }
@@ -581,7 +599,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                setCurrentIndexPreference()
+                //setCurrentIndexPreference()
 
                 syncControllerSongsWithRecyclerView(mediaController?.currentTimeline)
 
@@ -630,7 +648,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 super.onTimelineChanged(timeline, reason)
 
-                setMediaIdsPreference()
+                //setMediaIdsPreference()
 
                 syncControllerSongsWithRecyclerView(timeline)
             }
@@ -642,15 +660,11 @@ class MainActivity : AppCompatActivity() {
             override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
                 super.onShuffleModeEnabledChanged(shuffleModeEnabled)
 
-                viewModelMain.enableDisableShuffle(shuffleModeEnabled)
-
                 updateShuffleIndicator(shuffleModeEnabled)
             }
 
             override fun onRepeatModeChanged(repeatMode: Int) {
                 super.onRepeatModeChanged(repeatMode)
-
-                viewModelMain.setRepeatMode(repeatMode)
 
                 updateRepeatModeIndicator(repeatMode)
 
@@ -662,6 +676,11 @@ class MainActivity : AppCompatActivity() {
     private fun tryRestoreFromPreferences() {
 
         viewModelMain.restoreFromPreferences()
+    }
+
+    private fun restoreRepeatAndShuffleModeFromPreferences() {
+
+        viewModelMain.restoreRepeatAndShuffleFromPreferences()
     }
 
     private fun addRemoveFavorite() {
@@ -934,8 +953,6 @@ class MainActivity : AppCompatActivity() {
 
                 val currentPosition = currentPositionMs.toInt().div(1000)
 
-                viewModelMain.setPositionPreference(currentPositionMs)
-
                 binding.seekBar.progress = currentPosition
 
                 val progressString =
@@ -981,9 +998,12 @@ class MainActivity : AppCompatActivity() {
         mediaController?.shuffleModeEnabled?.let { mediaController?.shuffleModeEnabled = !it }
     }
 
-    private fun setShuffle(shuffle: Boolean) {
+    private fun setShuffleFromSharedPreferences(shuffle: Boolean) {
 
-        mediaController?.shuffleModeEnabled = shuffle
+        shuffle.let {
+
+            mediaController?.shuffleModeEnabled = it
+        }
     }
 
     private fun updateShuffleIndicator(shuffle: Boolean) {
@@ -993,26 +1013,37 @@ class MainActivity : AppCompatActivity() {
 
     private fun setRepeatMode() {
 
-        mediaController?.repeatMode?.let {
-            when (it) {
-                Player.REPEAT_MODE_OFF -> {
-                    //viewModelMain.setRepeatMode(Player.REPEAT_MODE_ALL)
-                    mediaController?.repeatMode = Player.REPEAT_MODE_ALL
-                }
-                Player.REPEAT_MODE_ALL -> {
-                    //viewModelMain.setRepeatMode(Player.REPEAT_MODE_ONE)
-                    mediaController?.repeatMode = Player.REPEAT_MODE_ONE
-                }
-                Player.REPEAT_MODE_ONE -> {
-                    //viewModelMain.setRepeatMode(Player.REPEAT_MODE_OFF)
-                    mediaController?.repeatMode = Player.REPEAT_MODE_OFF
-                }
-                else -> {
-                    //viewModelMain.setRepeatMode(Player.REPEAT_MODE_OFF)
-                    mediaController?.repeatMode = Player.REPEAT_MODE_OFF
-                }
+        val repeatMode = mediaController?.repeatMode
+
+        Log.d("repeatMode_controller", "repeatMode: $repeatMode")
+
+        when (repeatMode) {
+            Player.REPEAT_MODE_OFF -> {
+                //viewModelMain.setRepeatMode(Player.REPEAT_MODE_ALL)
+                mediaController?.repeatMode = Player.REPEAT_MODE_ALL
+            }
+            Player.REPEAT_MODE_ALL -> {
+                //viewModelMain.setRepeatMode(Player.REPEAT_MODE_ONE)
+                mediaController?.repeatMode = Player.REPEAT_MODE_ONE
+            }
+            Player.REPEAT_MODE_ONE -> {
+                //viewModelMain.setRepeatMode(Player.REPEAT_MODE_OFF)
+                mediaController?.repeatMode = Player.REPEAT_MODE_OFF
+            }
+            else -> {
+                //viewModelMain.setRepeatMode(Player.REPEAT_MODE_OFF)
+                //mediaController?.repeatMode = Player.REPEAT_MODE_OFF
             }
         }
+    }
+
+    private fun setRepeatModeFromSharedPrefs(repeatMode: Int) {
+
+        repeatMode.let {
+            mediaController?.repeatMode = it
+        }
+
+        Log.d("repeatMode_player", mediaController?.repeatMode.toString())
     }
 
     private fun updateRepeatModeIndicator(repeatMode: Int) {
@@ -1040,20 +1071,6 @@ class MainActivity : AppCompatActivity() {
                 binding.repeatMode.setIconResource(com.example.core.ui.R.drawable.ic_repeat_one_24)
             }
         }
-    }
-
-    private fun setRepeatModeFromSharedPrefs(repeatMode: Int) {
-
-        mediaController?.let {
-            when (repeatMode) {
-                Player.REPEAT_MODE_OFF -> it.repeatMode = Player.REPEAT_MODE_OFF
-                Player.REPEAT_MODE_ALL -> it.repeatMode = Player.REPEAT_MODE_ALL
-                Player.REPEAT_MODE_ONE -> it.repeatMode = Player.REPEAT_MODE_ONE
-                else -> it.repeatMode = Player.REPEAT_MODE_OFF
-            }
-        }
-
-        Log.d("repeatMode_player", mediaController?.repeatMode.toString())
     }
 
     private fun updateFavoriteButton(isFavorite: Boolean) {

@@ -36,6 +36,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -99,7 +100,7 @@ class FragmentPlaylists : Fragment() {
     private var selectedPlaylist: SelectedPlaylistPlaylistsPresentationModel =
         SelectedPlaylistPlaylistsPresentationModel.Default
 
-    private val viewModelPlaylists: ViewModelPlaylists by inject<ViewModelPlaylists>()
+    private val viewModelPlaylists: ViewModelPlaylists by viewModel<ViewModelPlaylists>()
 
     private var _binding: FragmentPlaylistsBinding? = null
 

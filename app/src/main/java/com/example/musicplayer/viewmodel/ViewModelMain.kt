@@ -10,7 +10,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.example.core.common.values.AUTO_PLAYLIST_IDS
 import com.example.core.common.values.FAVORITES_ID
-import com.example.core.common.values.RECENT_ID
 import com.example.features.musicsource.domain.models.MusicSourceMusicSourceDomainModel
 import com.example.features.musicsource.domain.usecases.GetAddQueuedUseCase
 import com.example.features.musicsource.domain.usecases.GetAddUpNextUseCase
@@ -26,7 +25,6 @@ import com.example.musicplayer.mappers.toPlaylistInfoMainPresentationModel
 import com.example.musicplayer.models.AudioEffectMainPresentationModel
 import com.example.musicplayer.models.BassBoostVirtualizerEffectMainUIModel
 import com.example.musicplayer.models.MusicSourceMainPresentationModel
-import com.example.musicplayer.models.PlayerStateMainPresentationModel
 import com.example.musicplayer.models.PlaylistInfoMainPresentationModel
 import com.example.musicplayer.sharedprefs.BassBoostVirtualizerPreferences
 import com.example.musicplayer.sharedprefs.PlayerPreferences
@@ -87,10 +85,10 @@ class ViewModelMain(
 
     val isControllerCreated: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    private val _enableShuffle = MutableStateFlow(false)
-    val enableShuffle = _enableShuffle.asStateFlow()
-    private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_ONE)
-    val repeatMode = _repeatMode.asStateFlow()
+    private val _enableShuffle = MutableSharedFlow<Boolean>()
+    val enableShuffle = _enableShuffle.asSharedFlow()
+    private val _repeatMode = MutableSharedFlow<Int>()
+    val repeatMode = _repeatMode.asSharedFlow()
 
     private val _userSelected: MutableSharedFlow<Boolean> = MutableSharedFlow()
 
@@ -179,10 +177,6 @@ class ViewModelMain(
         if (bassBoostEffects.value == null) {
             bassBoostEffects.tryEmit(BassBoostVirtualizerEffectMainUIModel(0, 0))
         }
-
-        _enableShuffle.tryEmit(playerPreferences.isShuffleEnabled)
-
-        _repeatMode.tryEmit(playerPreferences.repeatMode)
 
         viewModelScope.launch {
 
@@ -406,27 +400,11 @@ class ViewModelMain(
     fun restoreFromPreferences() {
 
         viewModelScope.launch {
-            val fromPreferences = playerPreferences.playerState
+            val fromPreferences = playerPreferences.getPlayerStatePreference()
 
-            val restored = if (fromPreferences != null) {
+            val mediaItems = assembleSourceMediaItemsFlowUseCase(fromPreferences.ids.toList())
 
-                val mediaItems = assembleSourceMediaItemsFlowUseCase(fromPreferences.ids.toList())
-
-                fromPreferences.toMusicSourceMainPresentationModel(mediaItems)
-
-            } else {
-
-                val default = PlayerStateMainPresentationModel(
-                    currentIndex = 0,
-                    displayText = "placeholder",
-                    position = 0,
-                    ids = emptySet()
-                )
-
-                playerPreferences.playerState = default
-
-                default.toMusicSourceMainPresentationModel(emptyList())
-            }
+            val restored = fromPreferences.toMusicSourceMainPresentationModel(mediaItems)
 
             _restorePrefsSharedFlow.emit(restored)
 
@@ -434,23 +412,13 @@ class ViewModelMain(
         }
     }
 
-    fun setPositionPreference(position: Long) {
+    fun restoreRepeatAndShuffleFromPreferences() {
 
         viewModelScope.launch {
 
-            playerPreferences.playerState = playerPreferences.playerState?.copy(
-                position = position
-            )
-        }
-    }
+            _enableShuffle.emit(playerPreferences.getShuffleModePreference())
 
-    fun setCurrentIndexPreference(currentIndex: Int) {
-
-        viewModelScope.launch {
-
-            playerPreferences.playerState = playerPreferences.playerState?.copy(
-                currentIndex = currentIndex
-            )
+            _repeatMode.emit(playerPreferences.getRepeatModePreference())
         }
     }
 
@@ -458,17 +426,17 @@ class ViewModelMain(
 
         viewModelScope.launch {
 
-            playerPreferences.playerState = playerPreferences.playerState?.copy(
-                ids = ids
-            )
+            playerPreferences.updateQueue(ids = ids)
         }
     }
 
-    fun enableDisableShuffle(enable: Boolean) {
+    /*fun enableDisableShuffle(enable: Boolean) {
 
         viewModelScope.launch {
 
-            playerPreferences.isShuffleEnabled = enable
+            _enableShuffle.update {
+                enable
+            }
         }
     }
 
@@ -476,7 +444,18 @@ class ViewModelMain(
 
         viewModelScope.launch {
 
-            playerPreferences.repeatMode = repeatMode
+            _repeatMode.update {
+
+                repeatMode
+            }
+        }
+    }*/
+
+    fun setCurrentIndexPreference(index: Int) {
+
+        viewModelScope.launch {
+
+            playerPreferences.updateCurrentIndex(index)
         }
     }
 

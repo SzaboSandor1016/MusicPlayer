@@ -3,7 +3,6 @@ package com.example.musicplayer.sharedprefs
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.media3.common.Player
-import androidx.media3.common.util.Log
 import com.example.musicplayer.models.PlayerStateMainPresentationModel
 import com.google.gson.Gson
 import org.koin.core.qualifier.named
@@ -32,21 +31,21 @@ class PlayerPreferences {
         named("GSON")
     )
 
-    var isShuffleEnabled: Boolean
+    private var isShuffleEnabled: Boolean
         get() = sharedPreferences.getBoolean(IS_SHUFFLE_ENABLED, false)
         set(enabled) = sharedPreferences.edit {
 
             putBoolean(IS_SHUFFLE_ENABLED, enabled)
         }
 
-    var repeatMode: Int
+    private var repeatMode: Int
         get() = sharedPreferences.getInt(REPEAT_MODE, Player.REPEAT_MODE_ONE)
         set(mode) = sharedPreferences.edit {
 
             putInt(REPEAT_MODE, mode)
         }
 
-    var playerState: PlayerStateMainPresentationModel?
+    private var playerState: PlayerStateMainPresentationModel?
         get() {
 
             val json = sharedPreferences.getString(PLAYER_STATE, null)
@@ -70,4 +69,58 @@ class PlayerPreferences {
                 putString(PLAYER_STATE,json)
             }
         }
+
+    fun getPlayerStatePreference(): PlayerStateMainPresentationModel {
+
+        val current = playerState
+
+        return if (current == null) {
+            val default = PlayerStateMainPresentationModel(
+                currentIndex = 0,
+                displayText = "",
+                position = 0,
+                ids = emptySet()
+            )
+
+            playerState = default
+
+            default
+        } else {
+            current
+        }
+    }
+
+    fun getShuffleModePreference(): Boolean = isShuffleEnabled
+
+    fun getRepeatModePreference(): Int = repeatMode
+
+    fun updatePosition(position: Long) {
+        val current = playerState ?: return
+        playerState = current.copy(position = position)
+    }
+
+    fun updateCurrentIndex(index: Int) {
+        val current = playerState ?: return
+        playerState = current.copy(currentIndex = index)
+    }
+
+    fun updateQueue(ids: Set<Long>) {
+        val current = playerState ?: PlayerStateMainPresentationModel(
+            currentIndex = 0,
+            displayText = "",
+            position = 0,
+            ids = emptySet()
+        )
+        playerState = current.copy(ids = ids)
+    }
+
+    fun updateRepeatMode(mode: Int) {
+
+        repeatMode = mode
+    }
+
+    fun updateShuffleEnabled(enabled: Boolean) {
+
+        isShuffleEnabled = enabled
+    }
 }

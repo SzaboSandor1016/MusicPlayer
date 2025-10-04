@@ -23,6 +23,7 @@ import com.example.features.songs.presentation.vievmodel.ViewModelSongs
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -71,7 +72,7 @@ class FragmentSongs : Fragment() {
 
     private var playlistDialog: AlertDialog? = null
 
-    private val viewModelSongs: ViewModelSongs by inject<ViewModelSongs>()
+    private val viewModelSongs: ViewModelSongs by viewModel<ViewModelSongs>()
 
     private var _binding: FragmentSongsBinding? = null
 
