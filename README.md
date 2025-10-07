@@ -66,7 +66,7 @@ manage custom and automatically created playlists like "Recently added" or "Favo
     cd MusicPlayer
 ```
 
-or simply download and install directly on a device using the latest released APK: [Download APK](https://github.com/SzaboSandor1016/MusicPlayer/releases/download/v1.0.1/app-debug.apk)
+or simply download and install directly on a device using the latest released APK: [Download APK](https://github.com/SzaboSandor1016/MusicPlayer/releases/download/v1.0.2/MusicPlayer-v1.0.2.apk)
 
 ### Running
 
