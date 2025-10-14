@@ -66,4 +66,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "kotlin-kapt"}
 android-library = { id = "com.android.library"}
-
+androidx-room = { id = "androidx.room", version.ref = "room"}

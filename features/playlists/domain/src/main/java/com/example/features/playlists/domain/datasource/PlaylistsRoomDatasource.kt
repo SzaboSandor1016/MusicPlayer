@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRoomDatasource {
 
-    suspend fun insertNewPlaylist(playlist: PlaylistPlaylistsDomainModel)
+    suspend fun insertNewPlaylist(playlist: PlaylistPlaylistsDomainModel/*.Entity*/)
 
     suspend fun deletePlaylist(playlistId: Long)
 
@@ -22,7 +22,9 @@ interface PlaylistsRoomDatasource {
 
     fun getPlaylistSongsByPlaylistId(playlistId: Long): Flow<List<PlaylistSongPlaylistsDomainModel>>
 
-    fun getPlaylistById(playlistId: Long): Flow<PlaylistPlaylistsDomainModel>
+    fun getPlaylistById(playlistId: Long): Flow<PlaylistPlaylistsDomainModel/*.Info*/>
 
-    fun getAllPlaylistsFromRoom(): Flow<List<PlaylistPlaylistsDomainModel>>
+    fun getAllAssociations(): Flow<List<PlaylistSongPlaylistsDomainModel>>
+
+    fun getAllPlaylistsFromRoom(): Flow<List<PlaylistPlaylistsDomainModel/*.Info*/>>
 }

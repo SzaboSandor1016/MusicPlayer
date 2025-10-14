@@ -31,6 +31,9 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":features:songs:domain"))
     implementation(project(":features:playlists:domain"))
+    implementation(project(":features:albums:domain"))
+    implementation(project(":features:artists:domain"))
+    implementation(project(":features:genres:domain"))
 
     implementation(libs.androidx.core.ktx)
 

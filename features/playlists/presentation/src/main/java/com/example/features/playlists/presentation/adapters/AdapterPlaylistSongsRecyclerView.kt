@@ -48,7 +48,7 @@ class AdapterPlaylistSongsRecyclerView(
 
         holder.binding.songDuration.setText(duration)
 
-        holder.binding.songArtist.setText(item.author)
+        holder.binding.songArtist.setText(item.artist)
 
         holder.binding.root.setOnClickListener { l ->
 

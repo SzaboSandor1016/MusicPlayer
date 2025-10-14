@@ -6,4 +6,7 @@
 
     <include app:graph="@navigation/playlists_nav_graph" />
     <include app:graph="@navigation/songs_nav_graph" />
+    <include app:graph="@navigation/genres_nav_graph" />
+    <include app:graph="@navigation/artists_nav_graph" />
+    <include app:graph="@navigation/albums_nav_graph" />
 </navigation>

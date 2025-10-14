@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import com.example.core.common.values.AUTO_PLAYLIST_IDS
 import com.example.core.common.values.FAVORITES_ID
 import com.example.features.musicsource.domain.models.MusicSourceMusicSourceDomainModel
@@ -19,16 +18,20 @@ import com.example.features.playlists.domain.usecases.DeletePlaylistSongUseCase
 import com.example.features.playlists.domain.usecases.GetAllPlaylistsFromRoomUseCase
 import com.example.features.playlists.domain.usecases.InsertPlaylistSongUseCase
 import com.example.features.songs.domain.usecase.AssembleSourceMediaItemsFlowUseCase
+import com.example.features.songs.domain.usecase.GetAllSongsFromRoomUseCase
 import com.example.musicplayer.mappers.toMusicSourceMainPresentationModel
 import com.example.musicplayer.sharedprefs.EqualizerPreferences
 import com.example.musicplayer.mappers.toPlaylistInfoMainPresentationModel
+import com.example.musicplayer.mappers.toSongIDMainPresentationModel
 import com.example.musicplayer.models.AudioEffectMainPresentationModel
 import com.example.musicplayer.models.BassBoostVirtualizerEffectMainUIModel
 import com.example.musicplayer.models.MusicSourceMainPresentationModel
 import com.example.musicplayer.models.PlaylistInfoMainPresentationModel
+import com.example.musicplayer.models.SongIDMainPresentationModel
 import com.example.musicplayer.sharedprefs.BassBoostVirtualizerPreferences
 import com.example.musicplayer.sharedprefs.PlayerPreferences
 import com.example.musicplayer.values.*
+import com.example.sync.domain.usecases.SyncRoomWithMediaStoreUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,12 +48,14 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.collections.map
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ViewModelMain(
     private val equalizerPreferences: EqualizerPreferences,
     private val playerPreferences: PlayerPreferences,
     private val bassBoostVirtualizerPreferences: BassBoostVirtualizerPreferences,
+    private val syncRoomWithMediaStoreUseCase: SyncRoomWithMediaStoreUseCase,
     private val getAddUpNextUseCase: GetAddUpNextUseCase,
     private val getAddQueuedUseCase: GetAddQueuedUseCase,
     private val getMusicSourceUseCase: GetMusicSourceUseCase,
@@ -58,8 +63,23 @@ class ViewModelMain(
     private val getAllPlaylistsFromRoomUseCase: GetAllPlaylistsFromRoomUseCase,
     private val insertPlaylistSongUseCase: InsertPlaylistSongUseCase,
     private val deletePlaylistSongUseCase: DeletePlaylistSongUseCase,
-    private val checkIsSongContainedInPlaylistUseCase: CheckIsSongContainedInPlaylistUseCase
+    private val checkIsSongContainedInPlaylistUseCase: CheckIsSongContainedInPlaylistUseCase,
+    private val getAllSongsFromRoomUseCase: GetAllSongsFromRoomUseCase
 ): ViewModel() {
+
+    val allSongsState: StateFlow<List<SongIDMainPresentationModel>> by lazy {
+
+        getAllSongsFromRoomUseCase().map { songs ->
+
+            songs.sortedBy { it.dateAdded }.map { it.toSongIDMainPresentationModel() }
+        }.flowOn(
+            Dispatchers.IO
+        ).stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+    }
 
     // MutableStateFlow to observe and emit changes in audio effects
     val audioEffects = MutableStateFlow<AudioEffectMainPresentationModel?>(null)
@@ -79,9 +99,9 @@ class ViewModelMain(
     // Unique audio session ID associated with the Exoplayer
     private var audioSessionId = 0
 
-    private val _restorePrefsSharedFlow = MutableSharedFlow<MusicSourceMainPresentationModel.MusicSource>()
+    private val _musicSourceSharedFlow = MutableSharedFlow<MusicSourceMainPresentationModel>()
 
-    val restorePrefsSharedFlow = _restorePrefsSharedFlow.asSharedFlow()
+    val musicSourceSharedFlow = _musicSourceSharedFlow.asSharedFlow()
 
     val isControllerCreated: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -117,7 +137,7 @@ class ViewModelMain(
 
     val musicSourceState: StateFlow<MusicSourceMainPresentationModel> by lazy {
 
-        getMusicSourceUseCase().mapLatest { source ->
+        getMusicSourceUseCase().map { source ->
 
             _userSelected.emit(true)
 
@@ -177,6 +197,32 @@ class ViewModelMain(
         if (bassBoostEffects.value == null) {
             bassBoostEffects.tryEmit(BassBoostVirtualizerEffectMainUIModel(0, 0))
         }
+
+        /*viewModelScope.launch {
+
+            getMusicSourceUseCase().map { source ->
+
+                _userSelected.emit(true)
+
+                when (source) {
+                    is MusicSourceMusicSourceDomainModel.None -> {
+
+                        MusicSourceMainPresentationModel.Default
+                    }
+
+                    is MusicSourceMusicSourceDomainModel.Source -> {
+
+                        val mediaItems = assembleSourceMediaItemsFlowUseCase(source.songs.toList())
+
+                        source.toMusicSourceMainPresentationModel(mediaItems)
+                    }
+                }
+
+            }.collect { musicSource ->
+
+                _musicSourceSharedFlow.emit(musicSource)
+            }
+        }*/
 
         viewModelScope.launch {
 
@@ -406,7 +452,7 @@ class ViewModelMain(
 
             val restored = fromPreferences.toMusicSourceMainPresentationModel(mediaItems)
 
-            _restorePrefsSharedFlow.emit(restored)
+            _musicSourceSharedFlow.emit(restored)
 
             _userSelected.emit(false)
         }
@@ -427,6 +473,14 @@ class ViewModelMain(
         viewModelScope.launch {
 
             playerPreferences.updateQueue(ids = ids)
+        }
+    }
+
+    fun syncRoomWithMediaStore() {
+
+        viewModelScope.launch {
+
+            syncRoomWithMediaStoreUseCase()
         }
     }
 
@@ -536,10 +590,12 @@ class ViewModelMain(
         viewModelScope.launch {
 
             try {
-                insertPlaylistSongUseCase(
-                    playlistId = playlistId,
-                    songId = songId
-                )
+                allSongsState.value.find { it.msId == songId }?.let {
+                    insertPlaylistSongUseCase(
+                        playlistId = playlistId,
+                        songId = it.id
+                    )
+                }
             } catch (e: Exception) {
                 _errorSharedFlow.tryEmit(0)
             }
@@ -551,10 +607,12 @@ class ViewModelMain(
         viewModelScope.launch {
 
             try {
-                deletePlaylistSongUseCase(
-                    playlistId = playlistId,
-                    songId = songId
-                )
+                allSongsState.value.find { it.msId == songId }?.let {
+                    deletePlaylistSongUseCase(
+                        playlistId = playlistId,
+                        songId = it.id
+                    )
+                }
             } catch (e: Exception) {
                 _errorSharedFlow.tryEmit(0)
             }

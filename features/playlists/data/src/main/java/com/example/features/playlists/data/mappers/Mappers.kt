@@ -1,13 +1,10 @@
 package com.example.features.playlists.data.mappers
 
-import com.example.datasources.database.dao.PlaylistsDao.SongWithPlaylistSong
-import com.example.datasources.database.dao.PlaylistsDao.PlaylistWithSongs
+import android.util.Log
 import com.example.datasources.database.dao.entities.PlaylistEntity
 import com.example.datasources.database.dao.entities.PlaylistSongEntity
-import com.example.datasources.database.dao.entities.SongEntity
 import com.example.features.playlists.domain.models.PlaylistPlaylistsDomainModel
 import com.example.features.playlists.domain.models.PlaylistSongPlaylistsDomainModel
-import com.example.features.playlists.domain.models.SongPlaylistsDomainModel
 
 fun PlaylistPlaylistsDomainModel.toPlaylistEntity(): PlaylistEntity {
     
@@ -20,6 +17,15 @@ fun PlaylistPlaylistsDomainModel.toPlaylistEntity(): PlaylistEntity {
 fun PlaylistPlaylistsDomainModel.toFullPlaylistEntity(): PlaylistEntity {
 
     return PlaylistEntity(
+        id = this.id,
+        label = this.label,
+        type = this.type
+    )
+}
+
+fun PlaylistEntity.toPlaylistPlaylistsDomainModel(): PlaylistPlaylistsDomainModel {
+
+    return PlaylistPlaylistsDomainModel(
         id = this.id,
         label = this.label,
         type = this.type
@@ -44,9 +50,9 @@ fun PlaylistSongEntity.toPlaylistSongDomainModel(): PlaylistSongPlaylistsDomainM
     )
 }
 
-fun PlaylistWithSongs.toPlaylistPlaylistsDomainModel(): PlaylistPlaylistsDomainModel {
+/*fun PlaylistWithSongs.toPlaylistPlaylistsDomainModel(): PlaylistPlaylistsDomainModel.Info {
 
-    return PlaylistPlaylistsDomainModel(
+    return PlaylistPlaylistsDomainModel.Info(
         id = this.playlistEntity.id,
         label = this.playlistEntity.label,
         type = this.playlistEntity.type,
@@ -55,11 +61,15 @@ fun PlaylistWithSongs.toPlaylistPlaylistsDomainModel(): PlaylistPlaylistsDomainM
 }
 fun SongWithPlaylistSong.toSongPlaylistsDomainModel(): SongPlaylistsDomainModel {
 
+    if(this.songEntity.artist == null) {
+        Log.d("null_artist", this.songEntity.song.displayName)
+    }
+
     return SongPlaylistsDomainModel(
-        id = this.songEntity.id,
+        id = this.songEntity.song.id,
         playlistId = this.playlistSongEntity.playlistId,
-        displayName = this.songEntity.displayName,
-        duration = this.songEntity.duration,
-        author = this.songEntity.author
+        displayName = this.songEntity.song.displayName,
+        duration = this.songEntity.song.duration,
+        author = this.songEntity.artist.name
     )
-}
+}*/

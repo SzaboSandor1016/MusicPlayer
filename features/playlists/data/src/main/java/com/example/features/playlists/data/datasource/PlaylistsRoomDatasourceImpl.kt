@@ -1,7 +1,6 @@
 package com.example.features.playlists.data.datasource
 
 import com.example.datasources.database.dao.PlaylistsDao
-import com.example.features.playlists.data.mappers.toFullPlaylistEntity
 import com.example.features.playlists.data.mappers.toPlaylistEntity
 import com.example.features.playlists.data.mappers.toPlaylistPlaylistsDomainModel
 import com.example.features.playlists.data.mappers.toPlaylistSongDomainModel
@@ -15,7 +14,7 @@ import kotlinx.coroutines.flow.map
 class PlaylistsRoomDatasourceImpl(
     private val playlistsDao: PlaylistsDao
 ): PlaylistsRoomDatasource {
-    override suspend fun insertNewPlaylist(playlist: PlaylistPlaylistsDomainModel) {
+    override suspend fun insertNewPlaylist(playlist: PlaylistPlaylistsDomainModel/*.Entity*/) {
 
         playlistsDao.insertNewPlaylist(
             playlistEntity = playlist.toPlaylistEntity()
@@ -79,14 +78,20 @@ class PlaylistsRoomDatasourceImpl(
         }
     }
 
-    override fun getPlaylistById(playlistId: Long): Flow<PlaylistPlaylistsDomainModel> {
+    override fun getPlaylistById(playlistId: Long): Flow<PlaylistPlaylistsDomainModel/*.Info*/> {
 
         return playlistsDao.getPlaylistById(playlistId).map {
             it.toPlaylistPlaylistsDomainModel()
         }
     }
 
-    override fun getAllPlaylistsFromRoom(): Flow<List<PlaylistPlaylistsDomainModel>> {
+    override fun getAllAssociations(): Flow<List<PlaylistSongPlaylistsDomainModel>> {
+        return playlistsDao.getAllAssociations().map { playlistSongs ->
+            playlistSongs.map { it.toPlaylistSongDomainModel() }
+        }
+    }
+
+    override fun getAllPlaylistsFromRoom(): Flow<List<PlaylistPlaylistsDomainModel/*.Info*/>> {
 
         return playlistsDao.getAllPlaylists().map { playlists ->
 

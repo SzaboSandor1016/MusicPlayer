@@ -64,6 +64,7 @@ dependencies {
     implementation(project(":features:playlists:domain"))
     implementation(project(":features:playlists:presentation"))
     implementation(project(":features:musicsource:domain"))
+    implementation(project(":features:sync:domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/artists_nav_graph"
+    app:startDestination="@id/fragmentArtists">
+
+    <fragment
+        android:id="@+id/fragmentArtists"
+        android:name="com.example.features.artists.presentation.fragment.FragmentArtists"
+        android:label="fragment_artists"
+        tools:layout="@layout/fragment_artists">
+        <action
+            android:id="@+id/action_fragmentArtists_to_fragmentSelectedArtist"
+            app:destination="@id/fragmentSelectedArtist" />
+        <deepLink
+            android:id="@+id/deepLink_artists"
+            app:uri="android-app://features/artists" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSelectedArtist"
+        android:name="com.example.features.artists.presentation.fragment.FragmentSelectedArtist"
+        android:label="fragment_selected_artist"
+        tools:layout="@layout/fragment_selected_artist" >
+        <action
+            android:id="@+id/action_fragmentSelectedArtist_to_fragmentArtists"
+            app:destination="@id/fragmentArtists" />
+        <action
+            android:id="@+id/action_fragmentSelectedArtist_to_fragmentSelectedArtistAlbum"
+            app:destination="@id/fragmentSelectedArtistAlbum" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSelectedArtistAlbum"
+        android:name="com.example.features.artists.presentation.fragment.FragmentSelectedArtistAlbum"
+        android:label="fragment_selected_artist_album"
+        tools:layout="@layout/fragment_selected_artist_album" >
+        <action
+            android:id="@+id/action_fragmentSelectedArtistAlbum_to_fragmentSelectedArtist"
+            app:destination="@id/fragmentSelectedArtist" />
+    </fragment>
+</navigation>

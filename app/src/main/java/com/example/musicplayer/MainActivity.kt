@@ -120,6 +120,8 @@ class MainActivity : AppCompatActivity() {
                 reSyncControllerWithUI()
             }
         }, MoreExecutors.directExecutor())
+
+        viewModelMain.syncRoomWithMediaStore()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -326,13 +328,31 @@ class MainActivity : AppCompatActivity() {
 
         touchHelper.attachToRecyclerView(binding.playlistRecyclerView)
 
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
 
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
                 combine(
                     viewModelMain.isControllerCreated,
                     viewModelMain.musicSourceState
+                ) { isCreated, source ->
+
+                    isCreated to source
+
+                }.filter{ it.first }.collect {(_, source) ->
+
+
+                }
+            }
+        }*/
+
+        lifecycleScope.launch {
+
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                combine(
+                    viewModelMain.isControllerCreated,
+                    viewModelMain.musicSourceSharedFlow
                 ) { isCreated, source ->
 
                     isCreated to source
@@ -357,9 +377,25 @@ class MainActivity : AppCompatActivity() {
 
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModelMain.restorePrefsSharedFlow.collect {
+                combine(
+                    viewModelMain.isControllerCreated,
+                    viewModelMain.musicSourceState
+                ) { isCreated, source ->
 
-                    updateSource(it)
+                    isCreated to source
+
+                }.filter{ it.first }.collect {(_, source) ->
+
+                    when (source) {
+                        is MusicSourceMainPresentationModel.Default -> {
+                            //updateSource(0, 0L, emptyList())
+                        }
+
+                        is MusicSourceMainPresentationModel.MusicSource -> {
+
+                            updateSource(source)
+                        }
+                    }
                 }
             }
         }
@@ -573,8 +609,17 @@ class MainActivity : AppCompatActivity() {
             0 -> NavDeepLinkRequest.Builder.fromUri(
             "android-app://features/songs".toUri()
             ).build()
-            else -> NavDeepLinkRequest.Builder.fromUri(
+            1 -> NavDeepLinkRequest.Builder.fromUri(
                 "android-app://features/playlists".toUri()
+            ).build()
+            2 -> NavDeepLinkRequest.Builder.fromUri(
+                "android-app://features/artists".toUri()
+            ).build()
+            3 -> NavDeepLinkRequest.Builder.fromUri(
+                "android-app://features/albums".toUri()
+            ).build()
+            else -> NavDeepLinkRequest.Builder.fromUri(
+                "android-app://features/genres".toUri()
             ).build()
         }
 
@@ -788,6 +833,7 @@ class MainActivity : AppCompatActivity() {
                         0
                     )
                 }
+                setMediaIdsPreference()
             }
 
             //controller.playWhenReady = userSelected

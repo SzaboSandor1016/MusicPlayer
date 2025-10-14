@@ -16,7 +16,6 @@ import com.example.features.songs.presentation.mappers.toPlaylistInfoPresentatio
 import com.example.features.songs.presentation.mappers.toSongSongsPresentationModel
 import com.example.features.songs.presentation.models.PlaylistInfoSongsPresentationModel
 import com.example.features.songs.presentation.models.SongSongsPresentationModel
-import com.example.sync.domain.usecases.SyncRoomWithMediaStoreUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,7 +33,6 @@ import kotlinx.coroutines.launch
 
 class ViewModelSongs(
     private val getAllPlaylistsFromRoomUseCase: GetAllPlaylistsFromRoomUseCase,
-    private val syncRoomWithMediaStoreUseCase: SyncRoomWithMediaStoreUseCase,
     private val getAllSongsFromRoomUseCase: GetAllSongsFromRoomUseCase,
     private val setMusicSourceUseCase: SetMusicSourceUseCase,
     private val insertPlaylistSongUseCase: InsertPlaylistSongUseCase,
@@ -46,7 +44,7 @@ class ViewModelSongs(
 
         getAllPlaylistsFromRoomUseCase().map { playlists ->
 
-            playlists.filter{ it.id !in AUTO_PLAYLIST_IDS }.map { it.toPlaylistInfoPresentationModel() }
+            playlists.filter { it.id !in AUTO_PLAYLIST_IDS }.map { it.toPlaylistInfoPresentationModel() }
         }.flowOn(
             Dispatchers.IO
         ).stateIn(
@@ -60,7 +58,7 @@ class ViewModelSongs(
 
         getAllSongsFromRoomUseCase().map { songs ->
 
-            songs.map { it.toSongSongsPresentationModel() }.reversed()
+            songs.sortedBy { it.dateAdded }.map { it.toSongSongsPresentationModel() }
         }.flowOn(
             Dispatchers.IO
         ).stateIn(
@@ -95,16 +93,17 @@ class ViewModelSongs(
         
         viewModelScope.launch {
 
-            val item = allSongsState.value.find { it.id == selectedItemId }
+            val item = allSongsState.value.find { it.msId == selectedItemId }
 
             if (item != null) {
 
                 val index = allSongsState.value.indexOf(item)
 
+                //TODO create mapper
                 val musicSource = MusicSourceMusicSourceDomainModel.Source(
                     initialIndex = index,
                     displayText = "All",
-                    songs = allSongsState.value.map { it.id/*.toSongMusicSourceDomainModel()*/ }
+                    songs = allSongsState.value.map { it.msId/*.toSongMusicSourceDomainModel()*/ }
                 )
 
                 setMusicSourceUseCase(
@@ -114,23 +113,19 @@ class ViewModelSongs(
         }
     }
 
-    fun syncRoomWithMediaStore() {
-
-        viewModelScope.launch {
-
-            syncRoomWithMediaStoreUseCase()
-        }
-    }
-
     fun addToPlaylist(playlistId: Long, songId: Long) {
         
         viewModelScope.launch {
             
             try {
-                insertPlaylistSongUseCase(
-                    playlistId = playlistId,
-                    songId = songId
-                )
+
+                allSongsState.value.find { it.msId == songId }?.let {
+
+                    insertPlaylistSongUseCase(
+                        playlistId = playlistId,
+                        songId = it.id
+                    )
+                }
             } catch (e: Exception) {
 
                 _errorSharedFlow.tryEmit(0)

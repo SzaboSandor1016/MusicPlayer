@@ -10,7 +10,7 @@ class PlaylistsRepositoryImpl(
     private val playlistsRoomDatasource: PlaylistsRoomDatasource
 ): PlaylistsRepository {
 
-    override suspend fun insertNewPlaylist(playlist: PlaylistPlaylistsDomainModel) {
+    override suspend fun insertNewPlaylist(playlist: PlaylistPlaylistsDomainModel/*.Entity*/) {
 
         playlistsRoomDatasource.insertNewPlaylist(
             playlist = playlist
@@ -31,11 +31,15 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    override fun getPlaylistById(playlistId: Long): Flow<PlaylistPlaylistsDomainModel> {
+    override fun getPlaylistById(playlistId: Long): Flow<PlaylistPlaylistsDomainModel/*.Info*/> {
 
         return playlistsRoomDatasource.getPlaylistById(
             playlistId = playlistId
         )
+    }
+
+    override fun getAllAssociations(): Flow<List<PlaylistSongPlaylistsDomainModel>> {
+        return playlistsRoomDatasource.getAllAssociations()
     }
 
     override suspend fun deletePlaylist(playlistId: Long) {
@@ -75,7 +79,7 @@ class PlaylistsRepositoryImpl(
         return playlistsRoomDatasource.isSongContainedInPlaylist(playlistId, songId)
     }
 
-    override fun getAllPlaylistsFromRoom(): Flow<List<PlaylistPlaylistsDomainModel>> {
+    override fun getAllPlaylistsFromRoom(): Flow<List<PlaylistPlaylistsDomainModel/*.Info*/>> {
 
         return playlistsRoomDatasource.getAllPlaylistsFromRoom()
     }

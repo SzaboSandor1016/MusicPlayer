@@ -1,6 +1,5 @@
 package com.example.features.playlists.presentation.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,9 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.common.values.AUTO_PLAYLIST_IDS
-import com.example.core.common.values.FAVORITES_ID
 import com.example.core.common.values.FAVORITES_NAME
-import com.example.core.common.values.RECENT_ID
 import com.example.core.common.values.RECENT_NAME
 import com.example.core.ui.PlaylistDialogHelper
 import com.example.core.ui.SongOptionsDialogHelper
@@ -35,7 +32,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -148,8 +144,10 @@ class FragmentPlaylists : Fragment() {
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return when(adapterAllPlaylists.getItemList().getOrNull(position)) {
-                    is GridItem.Header -> oneColumn
+                    is GridItem.PlaylistHeader -> oneColumn
                     is GridItem.Item -> twoColumn
+                    is GridItem.SongHeader -> oneColumn
+                    is GridItem.SongItem -> oneColumn
                     null -> oneColumn
                 }
             }
@@ -243,7 +241,7 @@ class FragmentPlaylists : Fragment() {
                     },
                     com.example.core.ui.R.string.remove_from_playlist to {
 
-                        val song = playlistSongs.first { it.id == songId }
+                        val song = playlistSongs.first { it.msId == songId }
 
                         updatePlaylistSongs(playlistSongs.minus(song))
 
@@ -444,7 +442,7 @@ class FragmentPlaylists : Fragment() {
 
         val list = mutableListOf<GridItem>()
 
-        list.add(GridItem.Header(
+        list.add(GridItem.PlaylistHeader(
             action = null,
             titleId = com.example.core.ui.R.string.created_automatically,
             actionId = null
@@ -473,7 +471,7 @@ class FragmentPlaylists : Fragment() {
 
         val list = mutableListOf<GridItem>()
 
-        list.add(GridItem.Header(
+        list.add(GridItem.PlaylistHeader(
             action = {
                 showNewPlaylistDialog(
                     com.example.core.ui.R.string.create_playlist,

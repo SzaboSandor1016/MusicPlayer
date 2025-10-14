@@ -26,4 +26,9 @@
     <string name="all_songs">Összes dal</string>
     <string name="playlists">Lejátszási listák</string>
     <string name="equalizer_on_off">Hangkeverő be/ki</string>
+    <string name="artists">Előadók</string>
+    <string name="albums">Albumok</string>
+    <string name="genres">Műfajok</string>
+    <string name="artist_songs">Az előadó művei</string>
+    <string name="artist_albums">Az előadó albumai</string>
 </resources>

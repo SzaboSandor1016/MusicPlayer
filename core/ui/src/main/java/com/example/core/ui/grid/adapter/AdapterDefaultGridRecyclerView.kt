@@ -3,11 +3,15 @@ package com.example.core.ui.grid.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.core.ui.databinding.LayoutGridHeaderBinding
 import com.example.core.ui.databinding.LayoutGridItemBinding
+import com.example.core.ui.databinding.LayoutGridPlaylistHeaderBinding
+import com.example.core.ui.databinding.LayoutGridSongHeaderBinding
+import com.example.core.ui.databinding.LayoutGridSongItemBinding
 import com.example.core.ui.grid.diff.GridDiff
 import com.example.core.ui.grid.holder.GridHeaderHolder
 import com.example.core.ui.grid.holder.GridItemHolder
+import com.example.core.ui.grid.holder.GridSongHeaderHolder
+import com.example.core.ui.grid.holder.GridSongItemHolder
 import com.example.core.ui.grid.model.GridItem
 import com.example.core.ui.grid.model.GridItemType
 
@@ -30,12 +34,23 @@ class AdapterDefaultGridRecyclerView(
     ): RecyclerView.ViewHolder {
 
         return when(GridItemType.entries[viewType]) {
-            GridItemType.HEADER -> GridHeaderHolder(LayoutGridHeaderBinding.inflate(
+            GridItemType.PLAYLIST_HEADER -> GridHeaderHolder(LayoutGridPlaylistHeaderBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ))
+            GridItemType.SONG_HEADER-> GridSongHeaderHolder(LayoutGridSongHeaderBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             ))
             GridItemType.ITEM -> GridItemHolder(LayoutGridItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ))
+
+            GridItemType.SONG_ITEM -> GridSongItemHolder(LayoutGridSongItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -48,8 +63,10 @@ class AdapterDefaultGridRecyclerView(
         position: Int
     ) {
         when(val item = list.getOrNull(position)) {
-            is GridItem.Header -> (holder as? GridHeaderHolder)?.bind(item)
+            is GridItem.PlaylistHeader -> (holder as? GridHeaderHolder)?.bind(item)
+            is GridItem.SongHeader -> (holder as? GridSongHeaderHolder)?.bind(item)
             is GridItem.Item -> (holder as? GridItemHolder)?.bind(item)
+            is GridItem.SongItem -> (holder as? GridSongItemHolder)?.bind(item)
             null -> {}
         }
     }

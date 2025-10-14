@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.ui.R
 import com.example.core.ui.databinding.LayoutAllSongsRecyclerViewItemBinding
-import com.example.core.ui.grid.diff.SongDiffCallback
+import com.example.core.ui.SongDiffCallback
 import com.example.core.ui.model.SongInfoUIModel
 
 open class DefaultSongAdapter/*(private val songs: List<SongInfoUIModel>)*/:

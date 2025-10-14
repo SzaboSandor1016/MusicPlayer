@@ -6,5 +6,13 @@ import org.koin.dsl.module
 val syncModule = module {
 
 
-    factory { SyncRoomWithMediaStoreUseCase(get(), get()) }
+    factory {
+        SyncRoomWithMediaStoreUseCase(
+        get(),
+        get(),
+            get(),
+            get(),
+            get()
+        )
+    }
 }

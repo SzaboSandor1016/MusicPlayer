@@ -12,13 +12,17 @@ import com.example.features.musicsource.domain.usecases.AddUpNextUseCase
 import com.example.features.musicsource.domain.usecases.SetMusicSourceUseCase
 import com.example.features.playlists.domain.usecases.DeletePlaylistSongUseCase
 import com.example.features.playlists.domain.usecases.DeletePlaylistUseCase
+import com.example.features.playlists.domain.usecases.GetAllAssociationsUseCase
 import com.example.features.playlists.domain.usecases.GetAllPlaylistsFromRoomUseCase
 import com.example.features.playlists.domain.usecases.InsertNewPlaylistUseCase
 import com.example.features.playlists.domain.usecases.InsertPlaylistSongUseCase
 import com.example.features.playlists.presentation.mappers.toPlaylistPlaylistsPresentationModel
 import com.example.features.playlists.presentation.mappers.toSongMusicSourceDomainModel
+import com.example.features.playlists.presentation.mappers.toSongPlaylistsPresentationModel
 import com.example.features.playlists.presentation.models.PlaylistPlaylistsPresentationModel
 import com.example.features.playlists.presentation.models.SelectedPlaylistPlaylistsPresentationModel
+import com.example.features.songs.domain.model.SongSongsDomainModel
+import com.example.features.songs.domain.usecase.GetAllSongsFromRoomUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +40,8 @@ import kotlinx.coroutines.launch
 
 class ViewModelPlaylists(
     private val getAllPlaylistsFromRoomUseCase: GetAllPlaylistsFromRoomUseCase,
+    private val getAllAssociationsUseCase: GetAllAssociationsUseCase,
+    private val getAllSongsFromRoomUseCase: GetAllSongsFromRoomUseCase,
     private val insertNewPlaylistUseCase: InsertNewPlaylistUseCase,
     private val deletePlaylistUseCase: DeletePlaylistUseCase,
     private val setMusicSourceUseCase: SetMusicSourceUseCase,
@@ -46,6 +52,20 @@ class ViewModelPlaylists(
 ): ViewModel() {
 
     private val autoPlaylistIds = listOf(FAVORITES_ID,RECENT_ID)
+
+    val songsState: StateFlow<List<SongSongsDomainModel.Info>> by lazy {
+
+        getAllSongsFromRoomUseCase().map { songs ->
+
+            songs
+        }.flowOn(
+            Dispatchers.IO
+        ).stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+    }
 
     private val _allPlaylistsState: MutableStateFlow<List<PlaylistPlaylistsPresentationModel>> = MutableStateFlow(emptyList())
 
@@ -71,11 +91,29 @@ class ViewModelPlaylists(
 
 
         viewModelScope.launch {
-            getAllPlaylistsFromRoomUseCase().map { playlists ->
 
-                playlists.map {
+            combine(
+                getAllPlaylistsFromRoomUseCase(),
+                getAllAssociationsUseCase(),
+                songsState
+            ) { playlistsFlow, associationsFlow, songsFlow ->
+
+                playlistsFlow.map { playlist ->
+
+                    val associations = associationsFlow
+                        .filter { it.playlistId == playlist.id }
+                        .sortedBy { it.order }
+                        .map { it.songId }
+
+                    val songIds = songsFlow.associateBy { it.id }
+
+                    val songs = associations.mapNotNull { songIds[it]?.toSongPlaylistsPresentationModel(playlist.id) }
+
+                    playlist.toPlaylistPlaylistsPresentationModel(songs)
+                /*playlists.map {
                     it.toPlaylistPlaylistsPresentationModel()
-                }
+                }*/
+            }
             }.flowOn(
                 Dispatchers.IO
             ).collect { playlists ->
@@ -200,10 +238,11 @@ class ViewModelPlaylists(
 
             _allPlaylistsState.value.find { it.id == playlistId }?.let { selectedPlaylist ->
 
+                //TODo create mapper
                 val musicSource = MusicSourceMusicSourceDomainModel.Source(
                     initialIndex = selectedIndex,
                     displayText = selectedPlaylist.label,
-                    songs = selectedPlaylist.songs.map { it.id/*toSongMusicSourceDomainModel()*/ }
+                    songs = selectedPlaylist.songs.map { it.msId/*toSongMusicSourceDomainModel()*/ }
                 )
 
                 setMusicSourceUseCase(
@@ -218,10 +257,12 @@ class ViewModelPlaylists(
         viewModelScope.launch {
 
             try {
-                insertPlaylistSongUseCase(
-                    playlistId = playlistId,
-                    songId = songId
-                )
+                songsState.value.find { it.msId == songId }?.let {
+                    insertPlaylistSongUseCase(
+                        playlistId = playlistId,
+                        songId = it.id
+                    )
+                }
             } catch (e: Exception) {
 
                 _errorSharedFlow.tryEmit(0)
@@ -231,12 +272,14 @@ class ViewModelPlaylists(
     
     fun removeFromPlaylist(playlistId: Long, songId: Long) {
         
-        viewModelScope.launch { 
-            
-            deletePlaylistSongUseCase(
-                playlistId = playlistId,
-                songId = songId
-            )
+        viewModelScope.launch {
+
+            songsState.value.find { it.msId == songId }?.let {
+                deletePlaylistSongUseCase(
+                    playlistId = playlistId,
+                    songId = it.id
+                )
+            }
         }
     }
 }

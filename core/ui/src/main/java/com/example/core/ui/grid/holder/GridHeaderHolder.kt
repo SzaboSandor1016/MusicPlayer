@@ -2,12 +2,12 @@ package com.example.core.ui.grid.holder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.example.core.ui.databinding.LayoutGridHeaderBinding
+import com.example.core.ui.databinding.LayoutGridPlaylistHeaderBinding
 import com.example.core.ui.grid.model.GridItem
 
-class GridHeaderHolder(val binding: LayoutGridHeaderBinding): RecyclerView.ViewHolder(binding.root) {
+class GridHeaderHolder(val binding: LayoutGridPlaylistHeaderBinding): RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: GridItem.Header) {
+    fun bind(item: GridItem.PlaylistHeader) {
 
         binding.title.setText(item.titleId)
 

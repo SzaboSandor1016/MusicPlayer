@@ -5,9 +5,11 @@ import com.example.core.ui.grid.model.GridItem
 import com.example.features.musicsource.domain.models.MusicSourceMusicSourceDomainModel
 import com.example.features.playlists.domain.models.PlaylistPlaylistsDomainModel
 import com.example.features.playlists.presentation.models.PlaylistPlaylistsPresentationModel
+import com.example.features.songs.domain.model.SongSongsDomainModel
 import com.example.musicplayer.models.MusicSourceMainPresentationModel
 import com.example.musicplayer.models.PlayerStateMainPresentationModel
 import com.example.musicplayer.models.PlaylistInfoMainPresentationModel
+import com.example.musicplayer.models.SongIDMainPresentationModel
 import com.example.musicplayer.models.SongMainPresentationModel
 
 fun PlaylistPlaylistsDomainModel.toPlaylistInfoMainPresentationModel(): PlaylistInfoMainPresentationModel {
@@ -57,5 +59,13 @@ fun PlayerStateMainPresentationModel.toMusicSourceMainPresentationModel(mediaIte
         songs = mediaItems,/*.map { it.id }.toSet()*/
         fromPrefs = false,
         //userSelected = false
+    )
+}
+
+fun SongSongsDomainModel.toSongIDMainPresentationModel(): SongIDMainPresentationModel {
+    
+    return SongIDMainPresentationModel(
+        id = this.id,
+        msId = this.msId
     )
 }

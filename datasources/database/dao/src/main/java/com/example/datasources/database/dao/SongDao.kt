@@ -1,7 +1,9 @@
 package com.example.datasources.database.dao
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.ABORT
 import androidx.room.OnConflictStrategy.Companion.REPLACE
@@ -37,4 +39,21 @@ interface SongDao {
         """
     )
     fun getAllSongs(): Flow<List<SongEntity>>
+
+    @Query(
+        value = """
+            SELECT s.*, a.name as name
+            FROM songs s JOIN artists a on a.id = s.artist_id
+        """
+    )
+    fun getAllSongsWithArtists(): Flow<List<SongWithArtist>>
+
+    data class SongWithArtist(
+        @Embedded
+        val song: SongEntity,
+        @ColumnInfo(name = "name")
+        val artist: String
+    ) {
+    }
+
 }
