@@ -118,6 +118,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 1000L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         val testArtist = ArtistEntity(
@@ -168,6 +169,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 1000L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testPlaylistsDao.insertNewPlaylist(
@@ -223,6 +225,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         val testSong1 = SongEntity(
@@ -233,6 +236,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 2L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testPlaylistsDao.insertNewPlaylist(
@@ -297,6 +301,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testPlaylistsDao.insertNewPlaylist(
@@ -357,6 +362,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
         val testSong1 = SongEntity(
             displayName = "testSong",
@@ -366,6 +372,7 @@ class PlaylistDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 2L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testPlaylistsDao.insertNewPlaylist(

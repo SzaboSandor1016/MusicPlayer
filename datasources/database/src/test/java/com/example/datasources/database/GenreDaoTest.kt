@@ -66,6 +66,7 @@ class GenreDaoTest {
                 genreId = 0L,
                 dateAdded = 1000,
                 msId = 0L,
+                key = "test/tes1|10_10_.mp3"
             ),
             SongEntity(
                 displayName = "1L",
@@ -75,6 +76,7 @@ class GenreDaoTest {
                 genreId = 1L,
                 dateAdded = 1000,
                 msId = 1L,
+                key = "test/tes1|10_10_.mp3"
             ),
         )
 
