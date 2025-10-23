@@ -77,11 +77,11 @@ class ViewModelPlaylists(
 
     private val _selectedPlaylistIdState: MutableStateFlow<Long?> = MutableStateFlow(null)
 
-    private val _selectedPlaylistState: MutableStateFlow<SelectedPlaylistPlaylistsPresentationModel> = MutableStateFlow(
-        SelectedPlaylistPlaylistsPresentationModel.Default
+    private val _selectedPlaylistState: MutableStateFlow<PlaylistPlaylistsPresentationModel?> = MutableStateFlow(
+        null
     )
 
-    val selectedPlaylistState: StateFlow<SelectedPlaylistPlaylistsPresentationModel> = _selectedPlaylistState.asStateFlow()
+    val selectedPlaylistState = _selectedPlaylistState.asStateFlow()
 
     private val _errorSharedFlow: MutableSharedFlow<Int> = MutableSharedFlow()
 
@@ -132,7 +132,9 @@ class ViewModelPlaylists(
                 _selectedPlaylistIdState
             ) { allPlaylists, selectedId ->
 
-                if (selectedId != null) {
+                allPlaylists.firstOrNull { it.id == selectedId }
+
+                /*if (selectedId != null) {
 
                     val playlist = allPlaylists.find { it.id == selectedId }
 
@@ -149,7 +151,7 @@ class ViewModelPlaylists(
                     }
                 } else {
                     SelectedPlaylistPlaylistsPresentationModel.Default
-                }
+                }*/
 
             }
             .flowOn(Dispatchers.IO)
@@ -181,6 +183,11 @@ class ViewModelPlaylists(
                 playlistId = playlistId
             )
         }
+    }
+
+    fun getSelectedPlaylistId(): Long? {
+
+        return _selectedPlaylistState.value?.id
     }
 
     fun selectPlaylist(playlistId: Long) {
@@ -231,16 +238,25 @@ class ViewModelPlaylists(
 
     fun setMusicSource(
         playlistId: Long,
-        selectedIndex: Int = 0
+        songId: Long? = null
     ) {
 
         viewModelScope.launch {
 
             _allPlaylistsState.value.find { it.id == playlistId }?.let { selectedPlaylist ->
 
+                val initialIndex = selectedPlaylist.songs.indexOfFirst { it.msId == songId }.let {
+
+                    if(it == -1) {
+                        0
+                    } else {
+                        it
+                    }
+                }
+
                 //TODo create mapper
                 val musicSource = MusicSourceMusicSourceDomainModel.Source(
-                    initialIndex = selectedIndex,
+                    initialIndex = initialIndex,
                     displayText = selectedPlaylist.label,
                     songs = selectedPlaylist.songs.map { it.msId/*toSongMusicSourceDomainModel()*/ }
                 )

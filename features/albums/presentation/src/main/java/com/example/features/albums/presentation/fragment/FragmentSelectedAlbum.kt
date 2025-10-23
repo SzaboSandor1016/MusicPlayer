@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.core.common.values.DEFAULT_ALBUM_NAMES
+import com.example.core.common.values.DEFAULT_ARTIST_NAMES
 import com.example.core.ui.PlaylistDialogHelper
 import com.example.core.ui.SongOptionsDialogHelper
 import com.example.core.ui.adapter.DefaultSongAdapter
@@ -210,7 +212,15 @@ class FragmentSelectedAlbum : Fragment() {
 
     private fun updateAlbumInfo(albumName: String, songCount: Int) {
 
-        binding.albumName.text = albumName
+        if (albumName !in DEFAULT_ALBUM_NAMES) {
+            binding.albumName.setText(
+                albumName
+            )
+        } else {
+            binding.albumName.setText(
+                com.example.core.ui.R.string.unknown_album
+            )
+        }
 
         binding.songCount.text = songCount.toString()
     }

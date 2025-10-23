@@ -3,6 +3,7 @@ package com.example.features.songs.domain.usecase
 import android.content.ContentUris
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 
@@ -22,10 +23,18 @@ class AssembleSourceMediaItemsSyncUseCase(
                     id
                 )
 
+            val sArt = "content://media/external/audio/albumart".toUri()
+            val artworkUri: Uri =
+                ContentUris.withAppendedId(
+                    sArt,
+                    metadata.albumId
+                )
+
             val mediaMetadata = MediaMetadata.Builder()
                 .setTitle(metadata.displayName)
                 .setDurationMs(metadata.duration.toLong())
                 .setArtist(metadata.author)
+                .setArtworkUri(artworkUri)
                 .build()
 
             MediaItem.Builder()

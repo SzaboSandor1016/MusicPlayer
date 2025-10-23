@@ -16,6 +16,7 @@ interface PlaylistsRepository {
 
     suspend fun updatePlaylistSongs(playlistSongs: List<PlaylistSongPlaylistsDomainModel>)
 
+    suspend fun deletePlaylistSongs(playlistSongs: List<PlaylistSongPlaylistsDomainModel>)
     suspend fun deletePlaylistSong(playlistId: Long, songId: Long)
 
     fun isSongContainedInPlaylist(playlistId: Long, songId: Long): Flow<Boolean>

@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":features:genres:data"))
     implementation(project(":features:genres:domain"))
     implementation(project(":features:genres:presentation"))
+    implementation(project(":features:player:presentation"))
 
     implementation(project(":datasources:database"))
     implementation(project(":datasources:database:dao"))

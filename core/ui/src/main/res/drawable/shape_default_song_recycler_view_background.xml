@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <corners
-        android:radius="24dp"/>
+        android:radius="8dp"/>
     <solid
         android:color="@color/default_song_recycler_view_item_color"/>
 </shape>

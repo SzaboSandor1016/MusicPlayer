@@ -32,9 +32,10 @@ val songsModule = module {
         get(),
         )
     }
-    factory { AssembleSourceMediaItemsSyncUseCase(
-        get(),
-    )
+    factory {
+        AssembleSourceMediaItemsSyncUseCase(
+            get(),
+        )
     }
 
     viewModelOf(::ViewModelSongs)

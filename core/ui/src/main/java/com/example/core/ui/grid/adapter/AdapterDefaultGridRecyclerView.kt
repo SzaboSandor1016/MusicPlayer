@@ -62,11 +62,13 @@ class AdapterDefaultGridRecyclerView(
         holder: RecyclerView.ViewHolder,
         position: Int
     ) {
-        when(val item = list.getOrNull(position)) {
+        val item = list.getOrNull(position)
+
+        when(item) {
             is GridItem.PlaylistHeader -> (holder as? GridHeaderHolder)?.bind(item)
             is GridItem.SongHeader -> (holder as? GridSongHeaderHolder)?.bind(item)
             is GridItem.Item -> (holder as? GridItemHolder)?.bind(item)
-            is GridItem.SongItem -> (holder as? GridSongItemHolder)?.bind(item)
+            is GridItem.SongItem -> (holder as? GridSongItemHolder)?.bind(item, position)
             null -> {}
         }
     }

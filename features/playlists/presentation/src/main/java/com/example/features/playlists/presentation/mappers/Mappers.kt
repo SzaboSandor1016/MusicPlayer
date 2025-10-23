@@ -12,6 +12,7 @@ fun PlaylistPlaylistsDomainModel.toPlaylistPlaylistsPresentationModel(songs: Lis
 
     return PlaylistPlaylistsPresentationModel(
         id = this.id,
+        albumId = songs.firstOrNull()?.albumId?: -1L,
         label = this.label,
         songs = songs
     )
@@ -22,6 +23,7 @@ fun SongSongsDomainModel.Info.toSongPlaylistsPresentationModel(playlistId: Long)
     return SongPlaylistsPresentationModel(
         id = this.id,
         msId = this.msId,
+        albumId = this.albumId,
         playlistId = playlistId,
         displayName = this.name,
         duration = this.duration,
@@ -40,6 +42,7 @@ fun SongPlaylistsPresentationModel.toSongInfoUIModel(): SongInfoUIModel {
     
     return SongInfoUIModel(
         id = this.msId,
+        albumId = this.albumId,
         name = this.displayName,
         duration = this.duration,
         artist = this.artist
@@ -56,6 +59,7 @@ fun PlaylistPlaylistsPresentationModel.toGridItem(
         action = action,
         actionAll = action1,
         itemId = this.id,
+        albumId = this.albumId,
         label = label
     )
 }

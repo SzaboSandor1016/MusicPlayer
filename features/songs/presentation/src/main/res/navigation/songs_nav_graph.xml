@@ -12,5 +12,7 @@
         tools:layout="@layout/fragment_songs" />
     <deepLink
         android:id="@+id/deepLink_songs"
-        app:uri="android-app://features/songs" />
+        app:uri="android-app://features/songs"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"/>
 </navigation>

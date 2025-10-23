@@ -12,6 +12,24 @@
         tools:layout="@layout/fragment_playlists">
         <deepLink
             android:id="@+id/deepLink_playlists"
-            app:uri="android-app://features/playlists" />
+            app:uri="android-app://features/playlists"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
+        <action
+            android:id="@+id/action_fragmentPlaylists_to_fragmentSelectedPlaylist"
+            app:destination="@id/fragmentSelectedPlaylist"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSelectedPlaylist"
+        android:name="com.example.features.playlists.presentation.fragment.FragmentSelectedPlaylist"
+        android:label="fragment_selected_playlist"
+        tools:layout="@layout/fragment_selected_playlist" >
+        <action
+            android:id="@+id/action_fragmentSelectedPlaylist_to_fragmentPlaylists"
+            app:destination="@id/fragmentPlaylists"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
     </fragment>
 </navigation>

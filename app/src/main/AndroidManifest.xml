@@ -18,7 +18,7 @@
         android:name=".Application">
 
         <service
-            android:name=".service.PlaybackService"
+            android:name="com.example.features.player.presentation.service.PlaybackService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true"
             >

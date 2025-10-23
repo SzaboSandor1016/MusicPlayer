@@ -58,7 +58,7 @@ class ViewModelSongs(
 
         getAllSongsFromRoomUseCase().map { songs ->
 
-            songs.sortedBy { it.dateAdded }.map { it.toSongSongsPresentationModel() }
+            songs.sortedBy { it.name.lowercase() }.map { it.toSongSongsPresentationModel() }
         }.flowOn(
             Dispatchers.IO
         ).stateIn(

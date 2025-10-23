@@ -63,80 +63,58 @@ class SyncRoomWithMediaStoreUseCase(
 
         val updatedItems = mutableListOf<SongSongsDomainModel.Entity>()
 
-        val removedItems = mutableListOf<SongSongsDomainModel.Entity>()
-
         mediaStoreIds.forEach { mediaItem ->
 
-            mediaStorePrimaryKeys[mediaItem.key.substringAfter("|")]?.let { items ->
+            mediaStorePrimaryKeys[mediaItem.key.substringAfter("|")]?.let { mediaStoreItems ->
+
+                /*val mediaStoreSecondaryKeys = mediaStoreItems.associateBy { it.key.substringBefore("|") }
+
+                roomKeys[mediaItem.key.substringAfter("|")]?.let { existing ->
+
+
+                }?: addedItems.add(mediaItem.value)*/
 
                 //TODO handle relativePath change
-                items.forEach { item ->
+                mediaStoreItems.forEach { item ->
 
-                    roomIds[item.key]?.let {
-                        updatedItems.add(
-                            item.copy(
-                                id = it.id
-                            )
-                        )
-                    }?: addedItems.add(item)
-                }
-            }
-        }
+                    roomKeys[item.key.substringAfter("|")]?.let { existingGroup ->
 
-        roomItems.forEach { song ->
+                        if (existingGroup.size == 1) {
 
-            val item = mediaStoreIds[song.key]
-
-            if (item == null) {
-                removedItems.add(song)
-            }
-        }
-
-        /*for (entry in mediaStoreIds) {
-
-            val elementsInEntry = entry.value
-
-            if (elementsInEntry.size > 1) {
-
-                val fullDuplicates = elementsInEntry.associateBy { it.key.substringBefore("|") }
-
-                for (element in fullDuplicates) {
-
-                    roomIds[element.key.substringAfter("|")].let {
-
-                        if (it != null) {
                             updatedItems.add(
-                                element.value.copy(
-                                    it.id
+                                item.copy(
+                                    id = existingGroup.first().id
                                 )
                             )
                         } else {
-                            addedItems.add(element.value)
+
+                            existingGroup.find {
+                                it.key.substringBefore("|") == item.key.substringBefore("|")
+                            }?.let {
+
+                                val updated = item.copy(
+                                    id = it.id
+                                )
+
+                                if (!updatedItems.contains(updated)) {
+
+                                    updatedItems.add(
+                                        updated
+                                    )
+                                }
+                            }?: { if (!addedItems.contains(item)) addedItems.add(item) }
                         }
-                    }
-                }
-            } else {
-
-                val item = elementsInEntry.first()
-
-                roomIds[item.key.substringAfter("|")].let {
-
-                    if (it != null) {
-                        updatedItems.add(
-                            item.copy(
-                                it.id
-                            )
-                        )
-                    } else {
-                        addedItems.add(item)
-                    }
+                    }?: if (!addedItems.contains(item)) addedItems.add(item) else {}
                 }
             }
-        }*/
+        }
 
-        //addedItems.addAll(mediaStoreItems.filter { it.key.substringAfter("|") !in roomIds })//.toMutableList()
+        val updatedIds = updatedItems.map { it.id }
 
-        //val removedItems = roomItems.filter { it.key.substringAfter("|") !in mediaStoreIds }
+        val removedItems = roomItems.filter {
+
+            it.id !in updatedIds && mediaStoreIds[it.key] == null
+        }
 
         songsRepository.updateSongs(updatedItems)
 
@@ -147,17 +125,44 @@ class SyncRoomWithMediaStoreUseCase(
 
     private suspend fun syncRecents() {
 
-        val associations = playlistsRepository.getPlaylistSongsByPlaylistId(RECENT_ID).first().map { it.songId }
+        val associations = playlistsRepository.getPlaylistSongsByPlaylistId(RECENT_ID).first()
 
         val roomItems = songsRepository.getAllSongsEntityFromRoom().first()
 
         val thresholdDate = Instant.now().minusSeconds(THIRTY_DAYS_IN_SECONDS).toEpochMilli()
 
-        val recents = roomItems.filter { it.dateAdded >= thresholdDate }.mapIndexed { index, model ->
-            PlaylistSongPlaylistsDomainModel(RECENT_ID,model.id, index + 1)
-        }.filter { it.songId !in associations }
+        val notRecents = roomItems.filter {
+            it.dateAdded < thresholdDate
+        }.map { it.id }
+
+        val deleted = associations.filter {
+            it.songId in notRecents
+        }
+
+        val remaining = associations.filter {
+
+            it.songId !in notRecents
+        }.mapIndexed { index, model ->
+            model.copy(
+                order = index + 1
+            )
+        }
+
+        val remainingIds = remaining.map { it.songId }
+
+        val recents = roomItems.filter {
+
+            it.dateAdded >= thresholdDate && it.id !in remainingIds
+        }.mapIndexed { index, model ->
+
+            PlaylistSongPlaylistsDomainModel(RECENT_ID,model.id, remaining.size + index + 1)
+        }
+
+        playlistsRepository.updatePlaylistSongs(remaining)
 
         playlistsRepository.insertPlaylistSongs(recents)
+
+        playlistsRepository.deletePlaylistSongs(deleted)
     }
 
     private suspend fun syncGenres() {

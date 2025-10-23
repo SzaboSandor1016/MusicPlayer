@@ -25,6 +25,7 @@ sealed class GridItem(val id: String, val type: GridItemType) {
         val action: ((Long) -> Unit)? = null,
         val actionAll: ((Long) -> Unit)? = null,
         val itemId: Long,
+        val albumId: Long = -1L,
         val label: String
     ): GridItem(GridItemId.ItemId.Companion.ITEM,GridItemType.ITEM)
 
@@ -32,6 +33,7 @@ sealed class GridItem(val id: String, val type: GridItemType) {
         val action: ((Long) -> Unit)? = null,
         val actionAll: ((Long, View) -> Unit)? = null,
         val itemId: Long,
+        val albumId: Long,
         val title: String,
         val duration: Int,
         val artist: String

@@ -12,10 +12,14 @@
         tools:layout="@layout/fragment_genres">
         <action
             android:id="@+id/action_fragmentGenres_to_fragmentSelectedGenre"
-            app:destination="@id/fragmentSelectedGenre" />
+            app:destination="@id/fragmentSelectedGenre"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
         <deepLink
             android:id="@+id/deepLink_genres"
-            app:uri="android-app://features/genres" />
+            app:uri="android-app://features/genres"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/fragmentSelectedGenre"
@@ -24,6 +28,8 @@
         tools:layout="@layout/fragment_selected_genre" >
         <action
             android:id="@+id/action_fragmentSelectedGenre_to_fragmentGenres"
-            app:destination="@id/fragmentGenres" />
+            app:destination="@id/fragmentGenres"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
     </fragment>
 </navigation>

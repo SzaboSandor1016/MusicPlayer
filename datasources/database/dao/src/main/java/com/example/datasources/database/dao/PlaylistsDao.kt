@@ -51,6 +51,11 @@ interface PlaylistsDao {
     )
     suspend fun updatePlaylistSongs(playlistSongs: List<PlaylistSongEntity>)
 
+    @Delete(
+        entity = PlaylistSongEntity::class
+    )
+    suspend fun deletePlaylistSongs(playlistSongs: List<PlaylistSongEntity>)
+
     @Query(
         value = """
             DELETE from associations

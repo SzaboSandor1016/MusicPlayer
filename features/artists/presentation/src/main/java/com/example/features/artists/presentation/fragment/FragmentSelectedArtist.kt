@@ -6,12 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.core.common.values.DEFAULT_ARTIST_NAMES
 import com.example.core.ui.PlaylistDialogHelper
 import com.example.core.ui.SongOptionsDialogHelper
 import com.example.core.ui.grid.adapter.AdapterDefaultGridRecyclerView
@@ -149,7 +149,8 @@ class FragmentSelectedArtist : Fragment() {
 
                         Log.d("selected_artist_fragment", it.albums.size.toString())
 
-                        assembleList(it)
+                        handleArtistChange(it)
+
                     }?: findNavController().navigate(R.id.action_fragmentSelectedArtist_to_fragmentArtists)
                 }
             }
@@ -186,6 +187,21 @@ class FragmentSelectedArtist : Fragment() {
         }
     }
 
+    private fun handleArtistChange(artist: ArtistArtistsPresentationModel) {
+
+        if (artist.name !in DEFAULT_ARTIST_NAMES) {
+            binding.artistName.setText(
+                artist.name
+            )
+        } else {
+            binding.artistName.setText(
+                com.example.core.ui.R.string.unknown_artist
+            )
+        }
+
+        assembleList(artist)
+    }
+
     private fun assembleList(artist: ArtistArtistsPresentationModel) {
 
         val gridList = mutableListOf<GridItem>()
@@ -210,7 +226,9 @@ class FragmentSelectedArtist : Fragment() {
 
         return mutableListOf(
             GridItem.SongHeader(
-                action = null,
+                action = {
+                    viewModelArtists.setArtistSongMusicSource()
+                },
                 titleId = com.example.core.ui.R.string.artist_songs,
                 actionId = null
             )
@@ -219,7 +237,7 @@ class FragmentSelectedArtist : Fragment() {
             song.toGridItem(
                 action = {
 
-                    viewModelArtists.setMusicSourceWithArtistSongs(it)
+                    viewModelArtists.setArtistSongMusicSource(it)
                 },
                 actionAll = { song, view ->
 
@@ -283,7 +301,7 @@ class FragmentSelectedArtist : Fragment() {
                 },
                 actionAll = {
 
-                    viewModelArtists.setMusicSource(
+                    viewModelArtists.setArtistAlbumMusicSource(
                         it
                     )
                 }

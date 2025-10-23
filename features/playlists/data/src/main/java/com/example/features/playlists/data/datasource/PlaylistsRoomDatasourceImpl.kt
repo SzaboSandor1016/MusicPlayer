@@ -49,6 +49,13 @@ class PlaylistsRoomDatasourceImpl(
         )
     }
 
+    override suspend fun deletePlaylistSongs(playlistSongs: List<PlaylistSongPlaylistsDomainModel>) {
+
+        playlistsDao.deletePlaylistSongs(
+            playlistSongs = playlistSongs.map { it.toPlaylistSongEntity() }
+        )
+    }
+
     override suspend fun deletePlaylistSong(playlistId: Long, songId: Long) {
 
         playlistsDao.deletePlaylistSong(

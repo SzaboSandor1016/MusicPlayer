@@ -21,6 +21,7 @@ fun ArtistArtistsDomainModel.toArtistArtistsPresentationModel(
     return ArtistArtistsPresentationModel(
         id = this.id,
         name = this.name,
+        albumId = songs.firstOrNull()?.albumId?: -1L,
         albums = albums,
         songs = songs
     )
@@ -40,6 +41,7 @@ fun SongSongsDomainModel.Info.toSongArtistsPresentationModel(): SongArtistsPrese
     return SongArtistsPresentationModel(
         id = this.id,
         msId = this.msId,
+        albumId = this.albumId,
         displayName = this.name,
         artist = this.artist,
         duration = this.duration
@@ -71,6 +73,7 @@ fun ArtistArtistsPresentationModel.toGridItem(
     return GridItem.Item(
         itemId = this.id,
         label = this.name,
+        albumId = this.albumId,
         action = action
     )
 }
@@ -95,6 +98,7 @@ fun SongArtistsPresentationModel.toGridItem(
 
     return GridItem.SongItem(
         itemId = this.msId,
+        albumId = this.albumId,
         action = action,
         actionAll = actionAll,
         title = this.displayName,
@@ -107,6 +111,7 @@ fun SongArtistsPresentationModel.toSongInfoUIModel(): SongInfoUIModel {
 
     return SongInfoUIModel(
         id = this.msId,
+        albumId = this.albumId,
         name = this.displayName,
         duration = this.duration,
         artist = this.artist

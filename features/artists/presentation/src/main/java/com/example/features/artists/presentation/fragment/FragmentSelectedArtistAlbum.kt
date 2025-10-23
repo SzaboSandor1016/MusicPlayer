@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.ui.PlaylistDialogHelper
 import com.example.core.ui.SongOptionsDialogHelper
 import com.example.core.ui.adapter.DefaultSongAdapter
-import com.example.core.ui.grid.adapter.AdapterDefaultGridRecyclerView
-import com.example.core.ui.grid.model.GridItem
 import com.example.core.ui.model.SongInfoUIModel
 import com.example.features.artists.presentation.R
 import com.example.features.artists.presentation.databinding.FragmentSelectedArtistAlbumBinding
@@ -119,7 +116,7 @@ class FragmentSelectedArtistAlbum : Fragment() {
 
             viewModelArtists.getSelectedAlbumId()?.let { albumId ->
 
-                viewModelArtists.setMusicSource(
+                viewModelArtists.setArtistAlbumMusicSource(
                     albumId,
                     songId
                 )

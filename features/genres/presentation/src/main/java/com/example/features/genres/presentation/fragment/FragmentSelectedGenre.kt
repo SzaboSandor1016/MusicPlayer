@@ -5,12 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.core.common.values.DEFAULT_GENRE_NAMES
 import com.example.core.ui.PlaylistDialogHelper
 import com.example.core.ui.SongOptionsDialogHelper
 import com.example.core.ui.adapter.DefaultSongAdapter
@@ -200,16 +200,24 @@ class FragmentSelectedGenre : Fragment() {
     private fun updateGenreUIElements(genre: GenreGenresPresentationModel) {
 
         updateGenreInfo(
-            albumName = genre.name,
+            genreName = genre.name,
             songCount = genre.songs.size
         )
 
         updateGenreSongsList(genre.songs)
     }
 
-    private fun updateGenreInfo(albumName: String, songCount: Int) {
+    private fun updateGenreInfo(genreName: String, songCount: Int) {
 
-        binding.genreName.text = albumName
+        if (genreName !in DEFAULT_GENRE_NAMES) {
+            binding.genreName.setText(
+                genreName
+            )
+        } else {
+            binding.genreName.setText(
+                com.example.core.ui.R.string.unknown_genre
+            )
+        }
 
         binding.songCount.text = songCount.toString()
     }

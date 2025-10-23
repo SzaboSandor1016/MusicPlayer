@@ -12,8 +12,8 @@ android {
         applicationId = "com.example.musicplayer"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 110
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -59,12 +59,11 @@ dependencies {
     implementation(project(":datasources:database:dao"))
     implementation(project(":core:ui"))
     implementation(project(":core:common"))
-    implementation(project(":features:songs:domain"))
     implementation(project(":features:songs:presentation"))
-    implementation(project(":features:playlists:domain"))
     implementation(project(":features:playlists:presentation"))
-    implementation(project(":features:musicsource:domain"))
+    implementation(project(":features:albums:domain"))
     implementation(project(":features:sync:domain"))
+    implementation(project(":features:player:presentation"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -80,6 +79,8 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer.dash)
 
     implementation(libs.gson)
+
+    implementation(libs.github.bumptech.glide)
 
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)

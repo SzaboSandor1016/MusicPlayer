@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.common.values.AUTO_PLAYLIST_IDS
@@ -81,10 +82,6 @@ class FragmentPlaylists : Fragment() {
 
     private var playlistDialog: AlertDialog? = null
 
-    private val playlistSongs: ArrayList<SongPlaylistsPresentationModel> = ArrayList()
-
-    private lateinit var adapterPlaylistSongs: DefaultSongAdapter
-
     private val allPlaylistsGrid: ArrayList<GridItem> = ArrayList()
 
     private lateinit var adapterAllPlaylists: AdapterDefaultGridRecyclerView
@@ -96,7 +93,7 @@ class FragmentPlaylists : Fragment() {
     private var selectedPlaylist: SelectedPlaylistPlaylistsPresentationModel =
         SelectedPlaylistPlaylistsPresentationModel.Default
 
-    private val viewModelPlaylists: ViewModelPlaylists by viewModel<ViewModelPlaylists>()
+    private val viewModelPlaylists: ViewModelPlaylists by viewModel<ViewModelPlaylists>( ownerProducer = { requireActivity() })
 
     private var _binding: FragmentPlaylistsBinding? = null
 
@@ -191,83 +188,6 @@ class FragmentPlaylists : Fragment() {
             }
         })*/
 
-        this.adapterPlaylistSongs = DefaultSongAdapter()
-
-        binding.playlistSongsRecyclerView.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-
-        binding.playlistSongsRecyclerView.adapter = this.adapterPlaylistSongs
-
-        this.adapterPlaylistSongs.setOnClickListener { songId ->
-
-            (selectedPlaylist as? SelectedPlaylistPlaylistsPresentationModel.Selected)?.playlist?.let { playlist ->
-
-                val song = playlist.songs.first { it.id == songId }
-
-                val index = playlistSongs.indexOf(song)
-
-                viewModelPlaylists.setMusicSource(
-                    playlist.id,
-                    index
-                )
-            }
-        }
-
-        this.adapterPlaylistSongs.setOnMoreOptionsClickListener { view, songId ->
-
-            val options = mutableListOf<Pair<Int, () -> Unit>>()
-
-            options.addAll(
-                listOf(
-                    com.example.core.ui.R.string.add_to_playlist to {
-
-                        PlaylistDialogHelper.showPlaylistSelectDialog(
-                            com.example.core.ui.R.string.add_to_playlist,
-                            com.example.core.ui.R.string.choose_playlist,
-                            requireContext(),
-                            allPlaylists,
-                            idSelector = { it.id },
-                            labelSelector = { it.label },
-                            onPlaylistSelected = {
-                                viewModelPlaylists.addToPlaylist(
-                                    playlistId = it,
-                                    songId = songId
-                                )
-                            }
-                        )
-                    },
-                    com.example.core.ui.R.string.remove_from_playlist to {
-
-                        val song = playlistSongs.first { it.msId == songId }
-
-                        updatePlaylistSongs(playlistSongs.minus(song))
-
-                        viewModelPlaylists.removeFromPlaylist(
-                            playlistId = song.playlistId,
-                            songId = songId
-                        )
-                    },
-                    com.example.core.ui.R.string.add_to_next_up to {
-
-                        viewModelPlaylists.addToUpNext(songId)
-                    },
-                    com.example.core.ui.R.string.add_to_queue to  {
-
-                        viewModelPlaylists.addToQueue(songId)
-                    }
-                )
-            )
-
-            SongOptionsDialogHelper.showSongOptionsDialog(
-                requireContext(),
-                view,
-                options
-            )
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -287,28 +207,9 @@ class FragmentPlaylists : Fragment() {
 
                 viewModelPlaylists.selectedPlaylistState.collect {
 
-                    selectedPlaylist = it
+                    it?.let {
 
-                    when(it) {
-
-                        is SelectedPlaylistPlaylistsPresentationModel.Default ->  {
-
-                            Log.d("playlist_fragment", "not selected")
-
-                            handlePlaylistSelect(false)
-
-                            setDefaultPlaylistInfo()
-                        }
-                        is SelectedPlaylistPlaylistsPresentationModel.Selected -> {
-
-                            Log.d("playlist_fragment", "selected")
-
-                            handlePlaylistSelect(true)
-
-                            setSelectedPlaylistInfo(
-                                it.playlist
-                            )
-                        }
+                        findNavController().navigate(R.id.action_fragmentPlaylists_to_fragmentSelectedPlaylist)
                     }
                 }
             }
@@ -321,52 +222,6 @@ class FragmentPlaylists : Fragment() {
                 viewModelPlaylists.errorSharedFlow.collect {
 
                     showErrorToast(it)
-                }
-            }
-        }
-
-        binding.back.setOnClickListener { l ->
-
-            viewModelPlaylists.unselectPlaylist()
-        }
-
-        binding.more.setOnClickListener { l ->
-
-            l?.let { view ->
-
-                (selectedPlaylist as? SelectedPlaylistPlaylistsPresentationModel.Selected)?.playlist?.let { playlist ->
-
-                    //TODO if more options are needed use this one below
-                    /*val options = mutableListOf<Pair<Int, () -> Unit>>()
-
-                    if (playlist.id !in AUTO_PLAYLIST_IDS) {
-                        options.add(com.example.core.ui.R.string.delete_playlist to {
-                            viewModelPlaylists.deletePlaylist(playlist.id)
-
-                            viewModelPlaylists.unselectPlaylist()
-                        })
-                    }
-
-                    SongOptionsDialogHelper.showSongOptionsDialog(
-                        requireContext(),
-                        view,
-                        options = options
-                    )*/
-
-                    if (playlist.id !in AUTO_PLAYLIST_IDS) {
-
-                        SongOptionsDialogHelper.showSongOptionsDialog(
-                            requireContext(),
-                            view,
-                            options = listOf(
-                                com.example.core.ui.R.string.delete_playlist to {
-                                    viewModelPlaylists.deletePlaylist(playlist.id)
-
-                                    viewModelPlaylists.unselectPlaylist()
-                                }
-                            ),
-                        )
-                    }
                 }
             }
         }
@@ -508,61 +363,6 @@ class FragmentPlaylists : Fragment() {
         })
 
         return list
-    }
-
-    private fun handlePlaylistSelect(selected: Boolean) {
-
-        if (selected) {
-
-            binding.selectedPlaylistLayout.visibility = View.VISIBLE
-
-            binding.playlistsLayout.visibility = View.GONE
-        } else {
-
-            binding.selectedPlaylistLayout.visibility = View.GONE
-
-            binding.playlistsLayout.visibility = View.VISIBLE
-        }
-    }
-
-    private fun setDefaultPlaylistInfo() {
-
-        binding.playlistName.setText("")
-
-        binding.songCount.setText("")
-
-        updatePlaylistSongs(emptyList())
-    }
-
-    private fun setSelectedPlaylistInfo(playlist: PlaylistPlaylistsPresentationModel) {
-
-        val label = when(playlist.label) {
-
-            FAVORITES_NAME -> com.example.core.ui.R.string.favorites
-            RECENT_NAME -> com.example.core.ui.R.string.recent
-            else -> Integer.MIN_VALUE
-        }
-
-        if (label == Integer.MIN_VALUE) {
-
-            binding.playlistName.setText(playlist.label)
-        }else {
-
-            binding.playlistName.setText(label)
-        }
-
-        binding.songCount.setText(playlist.songs.size.toString())
-
-        updatePlaylistSongs(playlist.songs)
-    }
-
-    private fun updatePlaylistSongs(songs: List<SongPlaylistsPresentationModel>) {
-
-        this.playlistSongs.clear()
-
-        this.playlistSongs.addAll(songs)
-
-        this.adapterPlaylistSongs.submitList(this.playlistSongs.map { it.toSongInfoUIModel() })
     }
 
     fun showErrorToast(errorCode: Int) {

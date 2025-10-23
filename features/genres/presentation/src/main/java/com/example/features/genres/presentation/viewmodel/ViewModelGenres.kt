@@ -60,7 +60,7 @@ class ViewModelGenres(
 
         getAllSongsFromRoomUseCase().map { songs ->
 
-            songs
+            songs.sortedBy { it.name.lowercase() }
         }.flowOn(
             Dispatchers.IO
         ).stateIn(
@@ -81,7 +81,6 @@ class ViewModelGenres(
 
                 val songs = songsFlow
                     .filter { it.genreId == genre.id }
-                    .sortedBy { it.dateAdded }
                     .map { it.toSongGenresPresentationModel() }
 
                 genre.toGenreGenresPresentationModel(songs)

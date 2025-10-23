@@ -24,10 +24,13 @@
     <string name="delete_playlist">Delete playlist</string>
     <string name="all_songs">All songs</string>
     <string name="playlists">Playlists</string>
-    <string name="equalizer_on_off">Equalizer on/off</string>
+    <string name="equalizer_on_off">"Equalizer "</string>
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
     <string name="genres">Genres</string>
     <string name="artist_songs">Songs of the artist</string>
     <string name="artist_albums">Albums of the artist</string>
+    <string name="unknown_album">Unknown album</string>
+    <string name="unknown_genre">Unknown genre</string>
+    <string name="unknown">Unknown</string>
 </resources>

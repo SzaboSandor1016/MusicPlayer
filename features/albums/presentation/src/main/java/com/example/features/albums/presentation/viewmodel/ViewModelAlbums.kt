@@ -78,7 +78,7 @@ class ViewModelAlbums(
 
             albums.map { album ->
 
-                val albumSongs = songs.filter { it.albumId == album.id }.sortedBy { it.dateAdded }
+                val albumSongs = songs.filter { it.albumId == album.id }.sortedBy { it.name.lowercase() }
 
                 album.toAlbumAlbumsPresentationModel(
                     albumSongs

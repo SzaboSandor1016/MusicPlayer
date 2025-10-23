@@ -13,8 +13,6 @@ import com.example.features.artists.presentation.mappers.toSongArtistsPresentati
 import com.example.features.artists.presentation.model.AlbumArtistsPresentationModel
 import com.example.features.artists.presentation.model.ArtistArtistsPresentationModel
 import com.example.features.artists.presentation.model.PlaylistInfoArtistsPresentationModel
-import com.example.features.artists.presentation.model.SongArtistsPresentationModel
-import com.example.features.musicsource.domain.models.MusicSourceMusicSourceDomainModel
 import com.example.features.musicsource.domain.usecases.AddQueuedUseCase
 import com.example.features.musicsource.domain.usecases.AddUpNextUseCase
 import com.example.features.musicsource.domain.usecases.SetMusicSourceUseCase
@@ -66,7 +64,7 @@ class ViewModelArtists(
 
         getAllSongsFromRoomUseCase().map { songs ->
 
-            songs
+            songs.sortedBy { it.name.lowercase() }
         }.flowOn(
             Dispatchers.IO
         ).stateIn(
@@ -84,9 +82,41 @@ class ViewModelArtists(
             songsState
         ) { artists, albums, songs ->
 
-            val albumsWithSongs = albums.map { album ->
+            val albumsWithSongs = songs.groupBy { it.albumId }
 
-                val albumSongs = songs.filter { it.albumId == album.id }.sortedBy { it.dateAdded }
+            val artistsWithSongs = songs.groupBy { it.artistId }
+
+            val albumsMapped = albums.map { album ->
+
+                val songs = albumsWithSongs[album.id].let {
+
+                    it ?: emptyList()
+                }
+                album.toAlbumArtistsPresentationModel(songs)
+            }
+
+            artists.map { artist ->
+
+                val songs = artistsWithSongs[artist.id].let {
+                    it ?: emptyList()
+                }.map { it.toSongArtistsPresentationModel() }
+
+                val songIds = songs.map { it.id }.toSet()
+
+                val albums = albumsMapped.filter { album ->
+
+                    album.songs.any { it.id in songIds }
+                }
+
+                artist.toArtistArtistsPresentationModel(
+                    albums = albums,
+                    songs = songs
+                )
+            }
+
+            /*val albumsWithSongs = albums.map { album ->
+
+                val albumSongs = songs.filter { it.albumId == album.id }*//*.sortedBy { it.dateAdded }*//*
 
                 album to albumSongs
             }
@@ -95,14 +125,14 @@ class ViewModelArtists(
 
                 val artistSongs = songs.filter { it.artistId == artist.id }
 
-                /*val songAlbums = artistSongs.map { it.albumId }.distinct()
+                *//*val songAlbums = artistSongs.map { it.albumId }.distinct()
 
                 val albs = albums.filter { it.id in songAlbums }.map { album ->
 
                     val albumSongs = songs.filter { it.albumId == album.id }
 
                     album.toAlbumArtistsPresentationModel(albumSongs)
-                }*/
+                }*//*
 
                 val artistAlbums = albumsWithSongs.filter { album ->
 
@@ -113,9 +143,9 @@ class ViewModelArtists(
                     albums = artistAlbums.map { album ->
                         album.first.toAlbumArtistsPresentationModel(album.second)
                     },
-                    songs = artistSongs.sortedBy { it.dateAdded }.map { it.toSongArtistsPresentationModel() }
+                    songs = artistSongs*//*.sortedBy { it.dateAdded }*//*.map { it.toSongArtistsPresentationModel() }
                 )
-            }
+            }*/
         }.flowOn(
             Dispatchers.IO
         ).stateIn(
@@ -245,8 +275,8 @@ class ViewModelArtists(
         }
     }
 
-    fun setMusicSourceWithArtistSongs(
-        songId: Long
+    fun setArtistSongMusicSource(
+        songId: Long? = null
     ) {
 
         viewModelScope.launch {
@@ -268,7 +298,7 @@ class ViewModelArtists(
         }
     }
 
-    fun setMusicSource(
+    fun setArtistAlbumMusicSource(
         albumId: Long,
         albumSongId: Long? = null
     ) {

@@ -11,6 +11,7 @@ fun SongSongsDomainModel.Info.toSongSongsPresentationModel(): SongSongsPresentat
 
     return SongSongsPresentationModel(
         id = this.id,
+        albumId = this.albumId,
         msId = this.msId,
         name = this.name,
         duration = this.duration,
@@ -37,6 +38,7 @@ fun SongSongsPresentationModel.toSongInfoUIModel(): SongInfoUIModel {
 
     return SongInfoUIModel(
         id = this.msId,
+        albumId = this.albumId,
         name = this.name,
         duration = this.duration,
         artist = this.author

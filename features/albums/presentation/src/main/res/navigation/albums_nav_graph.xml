@@ -12,10 +12,14 @@
         tools:layout="@layout/fragment_albums">
         <action
             android:id="@+id/action_fragmentAlbums_to_fragmentSelectedAlbum"
-            app:destination="@id/fragmentSelectedAlbum" />
+            app:destination="@id/fragmentSelectedAlbum"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
         <deepLink
             android:id="@+id/deepLink_albums"
-            app:uri="android-app://features/albums" />
+            app:uri="android-app://features/albums"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/fragmentSelectedAlbum"
@@ -24,6 +28,8 @@
         tools:layout="@layout/fragment_selected_album" >
         <action
             android:id="@+id/action_fragmentSelectedAlbum_to_fragmentAlbums"
-            app:destination="@id/fragmentAlbums" />
+            app:destination="@id/fragmentAlbums"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
     </fragment>
 </navigation>

@@ -10,7 +10,7 @@
 
     <color name="transparent">#00FFFFFF</color>
 
-    <color name="primary">#E9502D</color>
+    <!--<color name="primary">#E9502D</color>
     <color name="primary_night">#046CC9</color>
 
     <color name="primary_variant">#A2371F</color>
@@ -34,7 +34,7 @@
     <color name="color_surface_container">#F7F1ED</color>
     <color name="color_surface_container_night">#EDF2F7</color>
 
-    <color name="color_secondary_container">#F8E8DE</color>
+    <color name="color_secondary_container">#593D2B</color>
     <color name="color_secondary_container_night">#DEEBF8</color>
 
     <color name="color_on_secondary_container">#584B44</color>
@@ -56,6 +56,71 @@
     <color name="night_color_inverse_surface">#2F3235</color>
 
     <color name="light_title_text_color">#642D11</color>
-    <color name="night_title_text_color">#DEEEF8</color>
+    <color name="night_title_text_color">#DEEEF8</color>-->
+    <!--uncomment from here-->
 
+    <color name="app_background_light">#B3B3B3</color>
+    <color name="app_background_night">#1D1D1D</color>
+
+    <color name="gradient_start">#E9502D</color>
+    <color name="gradient_middle">#F37731</color>
+
+    <color name="current_song_background">#E9502D</color>
+    <color name="current_song_icon_tint">#F7F1ED</color>
+
+    <color name="songs_header_background_color_light">#C6C6C6</color>
+    <color name="songs_header_background_color_night">#313131</color>
+
+    <color name="tab_layout_background_light">#C4C4C4</color>
+    <color name="tab_layout_background_night">#2E2E2E</color>
+
+    <color name="recycler_view_background_light">#B4B4B4</color>
+    <color name="recycler_view_background_night">#1E1E1E</color>
+
+    <color name="song_art_background_light">#C4C4C4</color>
+    <color name="song_art_background_night">#2E2E2E</color>
+
+    <color name="primary">#E9502D</color>
+    <color name="primary_night">#046CC9</color>
+
+    <color name="primary_variant">#C4C4C4</color>
+    <color name="primary_variant_night">#2E2E2E</color>
+
+    <color name="secondary">#F09F72</color>
+    <color name="secondary_night">#0B87CF</color>
+
+    <color name="secondary_variant">#CA8A66</color>
+    <color name="secondary_variant_night">#0971AD</color>
+
+    <color name="tertiary">#FA9337</color>
+    <color name="tertiary_night">#14AED2</color>
+
+    <color name="tertiary_variant">#F89C49</color>
+    <color name="tertiary_variant_night">#28B1D1</color>
+
+    <color name="color_on_surface">#835C49</color>
+    <color name="color_on_surface_night">#405466</color>
+
+    <color name="color_surface_container">#F7F1ED</color>
+    <color name="color_surface_container_night">#EDF2F7</color>
+
+    <color name="color_secondary_container">#422D1F</color>
+    <color name="color_secondary_container_night">#DEEBF8</color>
+
+    <color name="color_on_secondary_container">#5B4F49</color>
+    <color name="color_on_secondary_container_night">#445158</color>
+
+    <color name="color_surface_container_low_light">#C4C4C4</color>
+    <color name="color_surface_container_low_night">#2E2E2E</color>
+
+    <color name="color_outline_light">#7E7E7E</color>
+    <color name="color_outline_night">#ABABAB</color>
+
+    <color name="default_song_recycler_view_item_color">#43908781</color>
+
+    <color name="light_color_inverse_surface">#85817E</color>
+    <color name="night_color_inverse_surface">#2F3235</color>
+
+    <color name="light_title_text_color">#2A1307</color>
+    <color name="night_title_text_color">#DEEEF8</color>
 </resources>

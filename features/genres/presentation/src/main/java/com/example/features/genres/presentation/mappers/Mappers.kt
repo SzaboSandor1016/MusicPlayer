@@ -14,6 +14,7 @@ fun GenreGenresDomainModel.toGenreGenresPresentationModel(songs: List<SongGenres
 
     return GenreGenresPresentationModel(
         id = this.id,
+        albumId = songs.firstOrNull()?.albumId?: -1L,
         name = this.name,
         songs = songs
     )
@@ -24,6 +25,7 @@ fun SongSongsDomainModel.Info.toSongGenresPresentationModel(): SongGenresPresent
     return SongGenresPresentationModel(
         id = this.id,
         msId = this.msId,
+        albumId = this.albumId,
         displayName = this.name,
         artist = this.artist,
         duration = this.duration
@@ -48,6 +50,7 @@ fun GenreGenresPresentationModel.toGridItem(
         action = action,
         actionAll = actionAll,
         itemId = this.id,
+        albumId = this.albumId,
         label = this.name
     )
 }
@@ -56,6 +59,7 @@ fun SongGenresPresentationModel.toSongInfoUIModel(): SongInfoUIModel {
 
     return SongInfoUIModel(
         id = this.msId,
+        albumId = this.albumId,
         name = this.displayName,
         duration = this.duration,
         artist = this.artist

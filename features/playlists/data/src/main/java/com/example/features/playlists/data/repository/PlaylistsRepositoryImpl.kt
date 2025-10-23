@@ -63,6 +63,13 @@ class PlaylistsRepositoryImpl(
         )
     }
 
+    override suspend fun deletePlaylistSongs(playlistSongs: List<PlaylistSongPlaylistsDomainModel>) {
+
+        playlistsRoomDatasource.deletePlaylistSongs(
+            playlistSongs = playlistSongs
+        )
+    }
+
     override suspend fun deletePlaylistSong(playlistId: Long, songId: Long) {
 
         playlistsRoomDatasource.deletePlaylistSong(
