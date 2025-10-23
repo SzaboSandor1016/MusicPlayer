@@ -4,19 +4,26 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.example.datasources.database.AppDatabase
+import com.example.datasources.database.dao.AlbumDao
+import com.example.datasources.database.dao.ArtistDao
+import com.example.datasources.database.dao.GenreDao
 import com.example.datasources.database.dao.PlaylistsDao
 import com.example.datasources.database.dao.SongDao
+import com.example.di.modules.albumsModule
+import com.example.di.modules.artistsModule
+import com.example.di.modules.genresModule
 import com.example.di.modules.mediaStoreModule
 import com.example.di.modules.musicSourceModule
+import com.example.di.modules.playerModule
 import com.example.di.modules.playlistsModule
 import com.example.di.modules.songsModule
 import com.example.di.modules.syncModule
-import com.example.musicplayer.sharedprefs.BassBoostVirtualizerPreferences
-import com.example.musicplayer.sharedprefs.BassBoostVirtualizerPreferences.Companion.BASS_BOOST_VIRTUALIZER_PREFERENCES
-import com.example.musicplayer.sharedprefs.EqualizerPreferences
-import com.example.musicplayer.sharedprefs.EqualizerPreferences.Companion.AUDIO_EFFECT_PREFERENCES
-import com.example.musicplayer.sharedprefs.PlayerPreferences
-import com.example.musicplayer.sharedprefs.PlayerPreferences.Companion.PLAYER_PREFERENCES
+import com.example.features.player.presentation.sharedprefs.BassBoostVirtualizerPreferences
+import com.example.features.player.presentation.sharedprefs.BassBoostVirtualizerPreferences.Companion.BASS_BOOST_VIRTUALIZER_PREFERENCES
+import com.example.features.player.presentation.sharedprefs.EqualizerPreferences
+import com.example.features.player.presentation.sharedprefs.EqualizerPreferences.Companion.AUDIO_EFFECT_PREFERENCES
+import com.example.features.player.presentation.sharedprefs.PlayerPreferences
+import com.example.features.player.presentation.sharedprefs.PlayerPreferences.Companion.PLAYER_PREFERENCES
 import com.example.musicplayer.viewmodel.ViewModelMain
 import com.google.gson.GsonBuilder
 import org.koin.android.ext.koin.androidContext
@@ -26,7 +33,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import kotlin.math.sin
 
 class Application: Application() {
 
@@ -87,6 +93,9 @@ class Application: Application() {
 
             single<SongDao> { appDatabase.songDao() }
             single<PlaylistsDao> { appDatabase.playlistsDao() }
+            single<AlbumDao> { appDatabase.albumDao() }
+            single<ArtistDao> { appDatabase.artistDao() }
+            single<GenreDao> { appDatabase.genreDao() }
         }
 
         startKoin {
@@ -98,6 +107,10 @@ class Application: Application() {
             modules(
                 appModule,
                 databaseModule,
+                genresModule,
+                albumsModule,
+                artistsModule,
+                playerModule,
                 playlistsModule,
                 musicSourceModule,
                 mediaStoreModule,

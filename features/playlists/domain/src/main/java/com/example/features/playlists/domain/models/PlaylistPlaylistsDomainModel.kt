@@ -1,9 +1,20 @@
 package com.example.features.playlists.domain.models
 
-data class PlaylistPlaylistsDomainModel(
+/*sealed*/data class PlaylistPlaylistsDomainModel(
     val id: Long,
-    val label: String,
-    val type: Int,
-    val songs: List<SongPlaylistsDomainModel>
+    /*open*/ val label: String,
+    /*open*/ val type: Int,
 ) {
+
+    /*data class Entity(
+        override val label: String,
+        override val type: Int
+    ): PlaylistPlaylistsDomainModel(label, type)
+
+    data class Info(
+        val id: Long,
+        override val label: String,
+        override val type: Int,
+        val songs: List<SongPlaylistsDomainModel>
+    ): PlaylistPlaylistsDomainModel(label,type)*/
 }

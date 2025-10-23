@@ -13,7 +13,6 @@ class InsertNewPlaylistUseCase(
             id = 0,
             label = playlistName,
             type = playlistType,
-            songs = emptyList()
         )
 
         playlistsRepository.insertNewPlaylist(

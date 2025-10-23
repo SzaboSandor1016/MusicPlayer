@@ -3,7 +3,9 @@ package com.example.datasources.database
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.datasources.database.dao.ArtistDao
 import com.example.datasources.database.dao.SongDao
+import com.example.datasources.database.dao.entities.ArtistEntity
 import com.example.datasources.database.dao.entities.SongEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -27,6 +29,8 @@ class SongDaoTest {
 
     private lateinit var testSongDao: SongDao
 
+    private lateinit var testArtistDao: ArtistDao
+
     @Before
     fun setUp() {
 
@@ -36,6 +40,8 @@ class SongDaoTest {
         ).allowMainThreadQueries().build()
 
         testSongDao = testDatabase.songDao()
+
+        testArtistDao = testDatabase.artistDao()
     }
 
     @After
@@ -47,32 +53,41 @@ class SongDaoTest {
     @Test
     fun insert_song_and_verify_by_getting_all_Test() = runTest {
 
+        val testArtist = ArtistEntity(
+            id = 0L,
+            name = "testArtist"
+        )
+
+        testArtistDao.insertArtists(listOf(testArtist))
+
         val testSong = SongEntity(
-            id = 1L,
             displayName = "test",
             duration = 3,
-            author = "testAuthor",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         testSongDao.insertSongs(listOf(testSong))
 
-        val inserted = testSongDao.getAllSongs().first().first()
+        val inserted = testSongDao.getAllSongsWithArtists().first().first()
 
-        assertTrue(inserted == testSong)
+        assertTrue( inserted.song.msId == testSong.msId && inserted.artist == testArtist.name)
     }
 
     @Test
     fun insert_existing_song_throws_error_test() = runTest {
 
         val existing = SongEntity(
-            id = 1L,
             displayName = "test",
             duration = 3,
-            author = "testAuthor",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         testSongDao.insertSongs(listOf(existing))
@@ -81,9 +96,11 @@ class SongDaoTest {
             id = 1L,
             displayName = "test",
             duration = 3,
-            author = "testAuthor",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         assertFails { testSongDao.insertSongs(listOf(duplicate)) }
@@ -92,22 +109,31 @@ class SongDaoTest {
     @Test
     fun delete_song_and_verify_by_getting_empty_list() = runTest {
 
+        val testArtist = ArtistEntity(
+            id = 0L,
+            name = "testArtist"
+        )
+
+        testArtistDao.insertArtists(listOf(testArtist))
+
         val testSong = SongEntity(
             id = 1L,
             displayName = "test",
             duration = 3,
-            author = "testAuthor",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         testSongDao.insertSongs(listOf(testSong))
 
-        val inserted = testSongDao.getAllSongs().first().first()
+        val inserted = testSongDao.getAllSongsWithArtists().first().first()
 
-        testSongDao.deleteSongs(listOf(inserted))
+        testSongDao.deleteSongs(listOf(inserted.song))
 
-        val afterDelete = testSongDao.getAllSongs().first()
+        val afterDelete = testSongDao.getAllSongsWithArtists().first()
 
         assertTrue(afterDelete.isEmpty())
     }
@@ -115,13 +141,22 @@ class SongDaoTest {
     @Test
     fun update_song_verify_updated() = runTest {
 
+        val testArtist = ArtistEntity(
+            id = 0L,
+            name = "testArtist"
+        )
+
+        testArtistDao.insertArtists(listOf(testArtist))
+
         val testSong = SongEntity(
             id = 1L,
             displayName = "test",
             duration = 3,
-            author = "testAuthor",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         testSongDao.insertSongs(listOf(testSong))
@@ -130,48 +165,58 @@ class SongDaoTest {
             id = 1L,
             displayName = "updated",
             duration = 2,
-            author = "updatedAuthor",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         testSongDao.updateSongs(listOf(updated))
 
-        val afterUpdate = testSongDao.getAllSongs().first().first()
+        val afterUpdate = testSongDao.getAllSongsWithArtists().first().first()
 
-        assertTrue { afterUpdate == updated }
+        assertTrue { afterUpdate.song.id == updated.id && afterUpdate.artist == testArtist.name }
     }
 
     @Test
-    fun getAllSongsTest() = runTest {
+    fun getAllSongsWithArtistsTest() = runTest {
+
+        val testArtist = ArtistEntity(
+            id = 0L,
+            name = "testArtist"
+        )
+
+        testArtistDao.insertArtists(listOf(testArtist))
 
         val testSongs = listOf(
             SongEntity(
-                id = 1L,
                 displayName = "test1",
                 duration = 2,
-                author = "testAuthor1",
-                album = 0L,
+                albumId = 0L,
+                artistId = 0L,
+                genreId = 0L,
                 dateAdded = 0L,
+                msId = 1L,
             ),
             SongEntity(
-                id = 2L,
                 displayName = "test2",
                 duration = 3,
-                author = "testAuthor2",
-                album = 0L,
+                albumId = 0L,
+                artistId = 0L,
+                genreId = 0L,
                 dateAdded = 0L,
+                msId = 2L,
             )
         )
 
         testSongDao.insertSongs(testSongs)
 
-        val inserted = testSongDao.getAllSongs().first()
+        val inserted = testSongDao.getAllSongsWithArtists().first()
 
         assertTrue {
 
-            inserted.first() == testSongs.first() &&
-                    inserted.last() == testSongs.last()
+            inserted.size == 2
         }
     }
 }

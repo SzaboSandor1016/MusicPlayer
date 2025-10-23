@@ -7,6 +7,7 @@ import com.example.features.playlists.domain.repository.PlaylistsRepository
 import com.example.features.playlists.domain.usecases.CheckIsSongContainedInPlaylistUseCase
 import com.example.features.playlists.domain.usecases.DeletePlaylistSongUseCase
 import com.example.features.playlists.domain.usecases.DeletePlaylistUseCase
+import com.example.features.playlists.domain.usecases.GetAllAssociationsUseCase
 import com.example.features.playlists.domain.usecases.GetAllPlaylistsFromRoomUseCase
 import com.example.features.playlists.domain.usecases.InsertNewPlaylistUseCase
 import com.example.features.playlists.domain.usecases.InsertPlaylistSongUseCase
@@ -25,9 +26,11 @@ val playlistsModule = module {
     factory { DeletePlaylistUseCase(get()) }
     factory { DeletePlaylistSongUseCase(get(), get() ) }
     factory { GetAllPlaylistsFromRoomUseCase(get()) }
+    factory { GetAllAssociationsUseCase(get()) }
     factory { InsertNewPlaylistUseCase(get()) }
     factory { InsertPlaylistSongUseCase(get()) }
     factory { UpdatePlaylistSongsUseCase(get()) }
     factory { CheckIsSongContainedInPlaylistUseCase(get()) }
+
     viewModelOf(::ViewModelPlaylists)
 }

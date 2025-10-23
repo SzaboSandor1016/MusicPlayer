@@ -1,0 +1,183 @@
+package com.example.features.albums.presentation.fragment
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.core.ui.grid.adapter.AdapterDefaultGridRecyclerView
+import com.example.core.ui.grid.model.GridItem
+import com.example.features.albums.presentation.R
+import com.example.features.albums.presentation.databinding.FragmentAlbumsBinding
+import com.example.features.albums.presentation.mappers.toGridItem
+import com.example.features.albums.presentation.model.AlbumAlbumsPresentationModel
+import com.example.features.albums.presentation.viewmodel.ViewModelAlbums
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+/*private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"*/
+
+/**
+ * A simple [Fragment] subclass.
+ * Use the [FragmentAlbums.newInstance] factory method to
+ * create an instance of this fragment.
+ */
+class FragmentAlbums : Fragment() {
+    // TODO: Rename and change types of parameters
+    /*private var param1: String? = null
+    private var param2: String? = null*/
+
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment FragmentAlbums.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(/*param1: String, param2: String*/) =
+            FragmentAlbums().apply {
+                arguments = Bundle().apply {
+                    /*putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)*/
+                }
+            }
+    }
+    private val gridSpanCount = 2
+
+    private val oneColumn = gridSpanCount / 1
+
+    private val twoColumns = gridSpanCount / 2
+
+    private val albums = ArrayList<GridItem>()
+
+    private lateinit var adapterAlbums: AdapterDefaultGridRecyclerView
+
+    private val viewModelAlbums: ViewModelAlbums by viewModel<ViewModelAlbums>(ownerProducer = { requireActivity()})
+
+    private var _binding: FragmentAlbumsBinding? = null
+
+    private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            /*param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)*/
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        _binding = FragmentAlbumsBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        // Inflate the layout for this fragment
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        adapterAlbums = AdapterDefaultGridRecyclerView()
+
+        val layoutManager = GridLayoutManager(
+            requireContext(),
+            gridSpanCount,
+            GridLayoutManager.VERTICAL,
+            false
+        )
+
+        layoutManager.spanSizeLookup = object: GridLayoutManager.SpanSizeLookup() {
+
+            override fun getSpanSize(position: Int): Int {
+
+                return when(adapterAlbums.getItemList().getOrNull(position)) {
+                    is GridItem.PlaylistHeader -> oneColumn
+                    is GridItem.Item -> twoColumns
+                    is GridItem.SongHeader -> oneColumn
+                    is GridItem.SongItem -> twoColumns
+                    null -> gridSpanCount
+                }
+            }
+        }
+
+        binding.albums.layoutManager = layoutManager
+
+        binding.albums.adapter = this.adapterAlbums
+
+        this.adapterAlbums.notifyList(this.albums)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                viewModelAlbums.allAlbumsState.collect {
+
+                    updateAlbumList(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                viewModelAlbums.selectedAlbumState.collect {
+
+                    it?.let {
+
+                        findNavController().navigate(R.id.action_fragmentAlbums_to_fragmentSelectedAlbum)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateAlbumList(albums: List<AlbumAlbumsPresentationModel>) {
+
+        this.albums.clear()
+
+        this.albums.addAll(
+            albums.map {
+                it.toGridItem(
+                    action = { albumId ->
+                        viewModelAlbums.setSelectedId(albumId)
+                    },
+                    actionAll = { albumId ->
+
+                        viewModelAlbums.setMusicSource(
+                            albumId
+                        )
+                    }
+                )
+            }
+        )
+
+        this.adapterAlbums.notifyList(this.albums.toList())
+
+        this.adapterAlbums.notifyDataSetChanged()
+    }
+}

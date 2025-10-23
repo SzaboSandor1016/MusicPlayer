@@ -13,8 +13,8 @@ import kotlinx.coroutines.withContext
 class MusicSourceRepositoryImpl: MusicSourceRepository {
 
     private val musicSourceDispatcher = Dispatchers.IO
-    private val musicSourceState: MutableStateFlow<MusicSourceMusicSourceDomainModel> =
-        MutableStateFlow(MusicSourceMusicSourceDomainModel.None)
+    private val musicSourceState: MutableSharedFlow<MusicSourceMusicSourceDomainModel> =
+        MutableSharedFlow()
 
     private val addUpNext: MutableSharedFlow<Long> = MutableSharedFlow()
 
@@ -29,10 +29,10 @@ class MusicSourceRepositoryImpl: MusicSourceRepository {
 
         withContext(musicSourceDispatcher) {
 
-            musicSourceState.update {
+            musicSourceState.emit(source)/* {
 
                 source
-            }
+            }*/
         }
     }
 

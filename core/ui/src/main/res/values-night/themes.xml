@@ -3,7 +3,7 @@
     <style name="Theme.MusicPlayer" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorPrimaryVariant">@color/primary_variant_night</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondary</item>
@@ -25,22 +25,56 @@
 
         <item name="colorSecondaryContainer">@color/color_secondary_container</item>
 
-        <item name="colorOutline">@color/color_outline</item>
+        <item name="colorOutline">@color/color_outline_light</item>
 
         <item name="colorSurfaceInverse">@color/night_color_inverse_surface</item>
 
         <item name="song_options_style_attribute">@style/Widget.Material3.Button.TextButton</item>
     </style>
 
+    <color name="color_outline">@color/color_outline_night</color>
+
+    <color name="song_art_background">@color/song_art_background_night</color>
+
+    <color name="title_text_color">@color/night_title_text_color</color>
+
+    <color name="app_background_color">@color/app_background_night</color>
+
     <color name="equalizer_background_color">@color/color_surface_container_low_night</color>
 
-    <color  name="playlist_item_bottom_cover">@color/color_outline</color>
+    <color name="tab_layout_background_color">@color/tab_layout_background_night</color>
+
+    <color name="recycler_view_background_color">@color/recycler_view_background_night</color>
+
+    <color name="songs_header_background_color">@color/songs_header_background_color_night</color>
+
+    <color  name="playlist_item_bottom_cover">@color/color_outline_light</color>
 
     <color name="played_music_note">@color/night_title_text_color</color>
+
+    <style name="Widget.Material3.TabLayout.0" parent="Widget.Material3.TabLayout">
+
+        <item name="background">@color/primary_variant</item>
+    </style>
+
+    <style name="Widget.Material3.BottomSheet.0" parent="Widget.Material3.BottomSheet">
+
+        <item name="shouldRemoveExpandedCorners">true</item>
+        <item name="cornerSizeTopLeft">8dp</item>
+        <item name="cornerSizeTopRight">8dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="background">@drawable/shape_bottom_sheet_background</item>
+    </style>
 
     <style name="Widget.Material3.Button.IconButton.0" parent="Widget.Material3.Button.IconButton">
 
         <item name="iconTint">@color/color_surface_container</item>
+    </style>
+
+    <style name="Widget.Material3.Button.IconButton.1" parent="Widget.Material3.Button.IconButton">
+
+        <item name="colorContainerChecked">@color/transparent</item>
+        <item name="android:checkable">true</item>
     </style>
 
     <style name="Widget.Material3.Button.TextButton.0" parent="Widget.Material3.Button.TextButton">

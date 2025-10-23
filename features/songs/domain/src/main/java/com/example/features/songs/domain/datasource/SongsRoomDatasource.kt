@@ -5,11 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface SongsRoomDatasource {
 
-    suspend fun insertSongs(songs: List<SongSongsDomainModel>)
+    suspend fun insertSongs(songs: List<SongSongsDomainModel.Entity>)
 
-    suspend fun deleteSongs(songs: List<SongSongsDomainModel>)
+    suspend fun deleteSongs(songs: List<SongSongsDomainModel.Entity>)
 
-    suspend fun updateSongs(songs: List<SongSongsDomainModel>)
+    suspend fun updateSongs(songs: List<SongSongsDomainModel.Entity>)
 
-    fun getAllSongs(): Flow<List<SongSongsDomainModel>>
+    fun getAllSongs(): Flow<List<SongSongsDomainModel.Entity>>
+
+    fun getAllSongsWithArtists(): Flow<List<SongSongsDomainModel.Info>>
 }

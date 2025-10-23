@@ -1,14 +1,19 @@
 package com.example.core.ui.adapter
 
+import android.content.ContentUris
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.core.common.values.DEFAULT_ARTIST_NAMES
 import com.example.core.ui.R
 import com.example.core.ui.databinding.LayoutAllSongsRecyclerViewItemBinding
-import com.example.core.ui.grid.diff.SongDiffCallback
+import com.example.core.ui.SongDiffCallback
 import com.example.core.ui.model.SongInfoUIModel
+import androidx.core.net.toUri
 
 open class DefaultSongAdapter/*(private val songs: List<SongInfoUIModel>)*/:
 ListAdapter<SongInfoUIModel,DefaultSongAdapter.ViewHolder>(SongDiffCallback()){
@@ -49,6 +54,10 @@ ListAdapter<SongInfoUIModel,DefaultSongAdapter.ViewHolder>(SongDiffCallback()){
 
         holder.binding.root.background = null
 
+        holder.binding.playedIcon.setImageResource(R.drawable.ic_music_note_single_36)
+
+        holder.binding.playedIcon.clipToOutline = true
+
         holder.binding.songTitle.setText(
             song.name
         )
@@ -62,9 +71,15 @@ ListAdapter<SongInfoUIModel,DefaultSongAdapter.ViewHolder>(SongDiffCallback()){
             duration
         )
 
-        holder.binding.songArtist.setText(
-            song.artist
-        )
+        if (song.artist !in DEFAULT_ARTIST_NAMES) {
+            holder.binding.songArtist.setText(
+                song.artist
+            )
+        } else {
+            holder.binding.songArtist.setText(
+                R.string.unknown_artist
+            )
+        }
 
         /*if (song.current) {
             (holder.binding.playedIcon.drawable as? Animatable)?.start()
@@ -91,6 +106,24 @@ ListAdapter<SongInfoUIModel,DefaultSongAdapter.ViewHolder>(SongDiffCallback()){
                 song.id
             )
         }
+
+        val uri = ContentUris.withAppendedId(
+            "content://media/external/audio/albumart".toUri(), song.albumId
+        )
+
+        Glide.with(
+            holder.binding.playedIcon
+        ).load(
+            uri
+        )/*.onlyRetrieveFromCache(
+            true
+        )*/.placeholder(
+            R.drawable.ic_music_note_single_36
+        ).error(
+            R.drawable.ic_music_note_single_36
+        ).into(
+            holder.binding.playedIcon
+        )
 
         //holder.bind(getItem(position), position)
     }

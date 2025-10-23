@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:common"))
     implementation(project(":features:playlists:domain"))
+    implementation(project(":features:songs:domain"))
     implementation(project(":features:musicsource:domain"))
 
     implementation(libs.androidx.core.ktx)

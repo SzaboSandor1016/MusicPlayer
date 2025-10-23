@@ -19,9 +19,9 @@ class GradientBackgroundView @JvmOverloads constructor(
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var radius: Float = 0f
 
-    private var startColor: Int = resources.getColor(R.color.secondary, context.theme)
-    private var centerColor: Int = resources.getColor(R.color.secondary, context.theme)
-    private var endColor: Int = resources.getColor(R.color.primary, context.theme)
+    private var startColor: Int = resources.getColor(R.color.tertiary, context.theme)
+    private var centerColor: Int = resources.getColor(R.color.gradient_middle, context.theme)
+    private var endColor: Int = resources.getColor(R.color.gradient_start, context.theme)
 
     init {
         context.theme.obtainStyledAttributes(

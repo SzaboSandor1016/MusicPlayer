@@ -8,7 +8,7 @@ class GetAllPlaylistsFromRoomUseCase(
     private val playlistsRepository: PlaylistsRepository
 ) {
 
-    operator fun invoke(): Flow<List<PlaylistPlaylistsDomainModel>> {
+    operator fun invoke(): Flow<List<PlaylistPlaylistsDomainModel/*.Info*/>> {
 
         return playlistsRepository.getAllPlaylistsFromRoom()
     }

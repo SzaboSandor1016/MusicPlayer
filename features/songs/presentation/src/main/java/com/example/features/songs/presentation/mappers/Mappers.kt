@@ -7,13 +7,15 @@ import com.example.features.songs.domain.model.SongSongsDomainModel
 import com.example.features.songs.presentation.models.PlaylistInfoSongsPresentationModel
 import com.example.features.songs.presentation.models.SongSongsPresentationModel
 
-fun SongSongsDomainModel.toSongSongsPresentationModel(): SongSongsPresentationModel {
+fun SongSongsDomainModel.Info.toSongSongsPresentationModel(): SongSongsPresentationModel {
 
     return SongSongsPresentationModel(
         id = this.id,
+        albumId = this.albumId,
+        msId = this.msId,
         name = this.name,
         duration = this.duration,
-        author = this.author
+        author = this.artist
     )
 }
 
@@ -35,7 +37,8 @@ fun PlaylistPlaylistsDomainModel.toPlaylistInfoPresentationModel(): PlaylistInfo
 fun SongSongsPresentationModel.toSongInfoUIModel(): SongInfoUIModel {
 
     return SongInfoUIModel(
-        id = this.id,
+        id = this.msId,
+        albumId = this.albumId,
         name = this.name,
         duration = this.duration,
         artist = this.author

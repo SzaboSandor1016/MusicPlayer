@@ -162,8 +162,6 @@ class FragmentSongs : Fragment() {
             )
         }
 
-        viewModelSongs.syncRoomWithMediaStore()
-
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

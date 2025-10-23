@@ -3,8 +3,10 @@ package com.example.datasources.database
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.datasources.database.dao.ArtistDao
 import com.example.datasources.database.dao.PlaylistsDao
 import com.example.datasources.database.dao.SongDao
+import com.example.datasources.database.dao.entities.ArtistEntity
 import com.example.datasources.database.dao.entities.PlaylistEntity
 import com.example.datasources.database.dao.entities.PlaylistSongEntity
 import com.example.datasources.database.dao.entities.SongEntity
@@ -23,6 +25,8 @@ class PlaylistDaoTest {
 
     private lateinit var testSongDao: SongDao
 
+    private lateinit var testArtistDao: ArtistDao
+
     @Before
     fun setUp() {
 
@@ -34,6 +38,8 @@ class PlaylistDaoTest {
         testPlaylistsDao = testDatabase.playlistsDao()
 
         testSongDao = testDatabase.songDao()
+
+        testArtistDao = testDatabase.artistDao()
     }
 
     @After
@@ -59,9 +65,8 @@ class PlaylistDaoTest {
 
         assertTrue {
 
-            inserted.first().playlistEntity.id == 1L &&
-                    inserted.first().playlistEntity.label == "testPlaylist" &&
-                    inserted.first().songs.isEmpty()
+            inserted.first().id == 1L &&
+                    inserted.first().label == "testPlaylist"
 
         }
     }
@@ -81,7 +86,7 @@ class PlaylistDaoTest {
 
         val inserted = testPlaylistsDao.getAllPlaylists().first()
 
-        testPlaylistsDao.deletePlaylist(inserted.first().playlistEntity.id)
+        testPlaylistsDao.deletePlaylist(inserted.first().id)
 
         val afterDelete = testPlaylistsDao.getAllPlaylists().first()
 
@@ -106,17 +111,25 @@ class PlaylistDaoTest {
             order = 1
         )
         val testSong = SongEntity(
-            id = 1,
             displayName = "testSong",
             duration = 3,
-            author = "testArtist",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 1000L,
+            msId = 1L,
+        )
+
+        val testArtist = ArtistEntity(
+            id = 0L,
+            name = "testArtist"
         )
 
         testPlaylistsDao.insertNewPlaylist(
             playlistEntity = testPlaylist
         )
+
+        testArtistDao.insertArtists(listOf(testArtist))
 
         testSongDao.insertSongs(listOf(testSong))
 
@@ -128,9 +141,8 @@ class PlaylistDaoTest {
 
         assertTrue {
 
-            inserted.first().playlistEntity.id == 1L &&
-                    inserted.first().playlistEntity.label == "testPlaylist" &&
-                    inserted.first().songs.first().songEntity.id == 1L
+            inserted.first().id == 1L &&
+                    inserted.first().label == "testPlaylist"
         }
     }
 
@@ -149,12 +161,13 @@ class PlaylistDaoTest {
             order = 1
         )
         val testSong = SongEntity(
-            id = 1,
             displayName = "testSong",
             duration = 3,
-            author = "testArtist",
-            album = 0L,
-            dateAdded = 1000L
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
+            dateAdded = 1000L,
+            msId = 1L,
         )
 
         testPlaylistsDao.insertNewPlaylist(
@@ -203,21 +216,23 @@ class PlaylistDaoTest {
         )
 
         val testSong = SongEntity(
-            id = 1,
             displayName = "testSong",
             duration = 3,
-            author = "testArtist",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         val testSong1 = SongEntity(
-            id = 2,
             displayName = "testSong1",
             duration = 3,
-            author = "testArtist1",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 2L,
         )
 
         testPlaylistsDao.insertNewPlaylist(
@@ -275,12 +290,13 @@ class PlaylistDaoTest {
             order = 1
         )
         val testSong = SongEntity(
-            id = 1,
             displayName = "testSong",
             duration = 3,
-            author = "testArtist",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
 
         testPlaylistsDao.insertNewPlaylist(
@@ -334,20 +350,22 @@ class PlaylistDaoTest {
             order = 2
         )
         val testSong = SongEntity(
-            id = 1,
             displayName = "testSong",
             duration = 3,
-            author = "testArtist",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 1L,
         )
         val testSong1 = SongEntity(
-            id = 2,
             displayName = "testSong",
             duration = 3,
-            author = "testArtist",
-            album = 0L,
+            albumId = 0L,
+            artistId = 0L,
+            genreId = 0L,
             dateAdded = 0L,
+            msId = 2L,
         )
 
         testPlaylistsDao.insertNewPlaylist(

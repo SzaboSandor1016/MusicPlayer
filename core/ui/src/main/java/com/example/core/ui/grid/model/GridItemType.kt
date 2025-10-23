@@ -2,5 +2,5 @@ package com.example.core.ui.grid.model
 
 enum class GridItemType {
 
-    HEADER, ITEM
+    PLAYLIST_HEADER, SONG_HEADER, ITEM, SONG_ITEM
 }

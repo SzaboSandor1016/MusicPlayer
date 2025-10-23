@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface SongsRepository {
 
-    suspend fun insertSongs(songs: List<SongSongsDomainModel>)
+    suspend fun insertSongs(songs: List<SongSongsDomainModel.Entity>)
 
-    suspend fun updateSongs(songs: List<SongSongsDomainModel>)
+    suspend fun updateSongs(songs: List<SongSongsDomainModel.Entity>)
 
-    suspend fun deleteSongs(songs: List<SongSongsDomainModel>)
+    suspend fun deleteSongs(songs: List<SongSongsDomainModel.Entity>)
 
     fun getSongMetadataFromIdFlow(id: Long): Flow<SongMetadataSongsDomainModel?>
 
@@ -24,7 +24,9 @@ interface SongsRepository {
 
     fun getEmbeddedAlbumArtFromIdSync(uri: Uri): Bitmap?*/
 
-    fun getAllSongsFromRoom(): Flow<List<SongSongsDomainModel>>
+    fun getAllSongsInfoFromRoom(): Flow<List<SongSongsDomainModel.Info>>
 
-    fun getAllSongsFromMediaStore(): Flow<List<SongSongsDomainModel>>
+    fun getAllSongsEntityFromRoom(): Flow<List<SongSongsDomainModel.Entity>>
+
+    fun getAllSongsFromMediaStore(): Flow<List<SongSongsDomainModel.Entity>>
 }

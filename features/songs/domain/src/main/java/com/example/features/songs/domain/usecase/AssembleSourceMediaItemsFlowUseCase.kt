@@ -8,6 +8,7 @@ import androidx.media3.common.MediaMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import androidx.core.net.toUri
 
 class AssembleSourceMediaItemsFlowUseCase(
     private val getSongMetadataByIdFlowUseCase: GetSongMetadataByIdFlowUseCase,
@@ -25,11 +26,18 @@ class AssembleSourceMediaItemsFlowUseCase(
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         id
                     )
+                val sArt = "content://media/external/audio/albumart".toUri()
+                val artworkUri: Uri =
+                    ContentUris.withAppendedId(
+                        sArt,
+                        metadata.albumId
+                    )
 
                 val mediaMetadata = MediaMetadata.Builder()
                     .setTitle(metadata.displayName)
                     .setDurationMs(metadata.duration.toLong())
                     .setArtist(metadata.author)
+                    .setArtworkUri(artworkUri)
                     .build()
 
                 MediaItem.Builder()

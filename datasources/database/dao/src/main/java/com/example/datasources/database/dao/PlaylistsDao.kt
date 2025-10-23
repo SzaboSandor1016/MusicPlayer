@@ -10,6 +10,7 @@ import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.datasources.database.dao.entities.ArtistEntity
 import com.example.datasources.database.dao.entities.PlaylistEntity
 import com.example.datasources.database.dao.entities.PlaylistSongEntity
 import com.example.datasources.database.dao.entities.SongEntity
@@ -50,6 +51,11 @@ interface PlaylistsDao {
     )
     suspend fun updatePlaylistSongs(playlistSongs: List<PlaylistSongEntity>)
 
+    @Delete(
+        entity = PlaylistSongEntity::class
+    )
+    suspend fun deletePlaylistSongs(playlistSongs: List<PlaylistSongEntity>)
+
     @Query(
         value = """
             DELETE from associations
@@ -85,6 +91,7 @@ interface PlaylistsDao {
     )
     fun getAssociationsByPlaylistId(playlistId: Long): Flow<List<PlaylistSongEntity>>
 
+    @Transaction
     @Query(
         value = """
             SELECT * 
@@ -92,7 +99,7 @@ interface PlaylistsDao {
             WHERE id = :playlistId
         """
     )
-    fun getPlaylistById(playlistId: Long): Flow<PlaylistWithSongs>
+    fun getPlaylistById(playlistId: Long): Flow<PlaylistEntity>
 
     @Transaction
     @Query(
@@ -101,9 +108,9 @@ interface PlaylistsDao {
             FROM playlists
         """
     )
-    fun getAllPlaylists(): Flow<List<PlaylistWithSongs>>
+    fun getAllPlaylists(): Flow<List<PlaylistEntity>>
 
-    data class PlaylistWithSongs(
+    /*data class PlaylistWithSongs(
         @Embedded
         val playlistEntity: PlaylistEntity,
         @Relation(
@@ -118,9 +125,20 @@ interface PlaylistsDao {
         @Embedded
         val playlistSongEntity: PlaylistSongEntity,
         @Relation(
+            entity = SongEntity::class,
             parentColumn = "song_id",
             entityColumn = "id"
         )
-        val songEntity: SongEntity
+        val songEntity: SongWithArtist
     )
+
+    data class SongWithArtist(
+        @Embedded
+        val song: SongEntity,
+        @Relation(
+            parentColumn = "artist_id",
+            entityColumn = "id"
+        )
+        val artist: ArtistEntity
+    )*/
 }

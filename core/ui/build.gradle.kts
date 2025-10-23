@@ -28,9 +28,13 @@ android {
 
 dependencies {
 
+    implementation(project(":core:common"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    implementation(libs.github.bumptech.glide)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.junit)

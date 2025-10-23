@@ -1,8 +1,8 @@
 package com.example.features.songs.data.repository
 
-import com.example.datasources.mediastore.domain.SongsLocalDatasource
+import com.example.datasources.mediastore.domain.MediaStoreLocalDatasource
 import com.example.features.songs.data.mappers.toSongMetadataSongsDomainModel
-import com.example.features.songs.data.mappers.toSongSongsDomainModel
+import com.example.features.songs.data.mappers.toSongSongsDomainModelInfo
 import com.example.features.songs.domain.datasource.SongsRoomDatasource
 import com.example.features.songs.domain.model.SongMetadataSongsDomainModel
 import com.example.features.songs.domain.model.SongSongsDomainModel
@@ -14,13 +14,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class SongsRepositoryImpl(
-    private val songsLocalDatasource: SongsLocalDatasource,
+    private val mediaStoreLocalDatasource: MediaStoreLocalDatasource,
     private val songsRoomDatasource: SongsRoomDatasource
 ): SongsRepository {
 
     private val songsRepositoryCoroutineDispatcher = Dispatchers.IO
 
-    override suspend fun insertSongs(songs: List<SongSongsDomainModel>) {
+    override suspend fun insertSongs(songs: List<SongSongsDomainModel.Entity>) {
 
         withContext(songsRepositoryCoroutineDispatcher) {
 
@@ -28,7 +28,7 @@ class SongsRepositoryImpl(
         }
     }
 
-    override suspend fun updateSongs(songs: List<SongSongsDomainModel>) {
+    override suspend fun updateSongs(songs: List<SongSongsDomainModel.Entity>) {
 
         withContext(songsRepositoryCoroutineDispatcher) {
 
@@ -36,7 +36,7 @@ class SongsRepositoryImpl(
         }
     }
 
-    override suspend fun deleteSongs(songs: List<SongSongsDomainModel>) {
+    override suspend fun deleteSongs(songs: List<SongSongsDomainModel.Entity>) {
 
         withContext(songsRepositoryCoroutineDispatcher) {
 
@@ -46,7 +46,7 @@ class SongsRepositoryImpl(
 
     override fun getSongMetadataFromIdFlow(id: Long): Flow<SongMetadataSongsDomainModel?> {
 
-        return flowOf(songsLocalDatasource.getMediaItemFromId(id)).map {
+        return flowOf(mediaStoreLocalDatasource.getMediaItemFromId(id)).map {
 
             it?.toSongMetadataSongsDomainModel()
         }
@@ -54,7 +54,7 @@ class SongsRepositoryImpl(
 
     override fun getSongMetadataFromIdSync(id: Long): SongMetadataSongsDomainModel? {
 
-        return songsLocalDatasource.getMediaItemFromId(id)?.toSongMetadataSongsDomainModel()
+        return mediaStoreLocalDatasource.getMediaItemFromId(id)?.toSongMetadataSongsDomainModel()
     }
 
     /*override fun getSongThumbnailByUriFlow(uri: Uri): Flow<Bitmap?> {
@@ -76,15 +76,19 @@ class SongsRepositoryImpl(
         return songsLocalDatasource.getEmbeddedAlbumArt(uri)
     }*/
 
-    override fun getAllSongsFromRoom(): Flow<List<SongSongsDomainModel>> {
+    override fun getAllSongsInfoFromRoom(): Flow<List<SongSongsDomainModel.Info>> {
 
+        return songsRoomDatasource.getAllSongsWithArtists()
+    }
+
+    override fun getAllSongsEntityFromRoom(): Flow<List<SongSongsDomainModel.Entity>> {
         return songsRoomDatasource.getAllSongs()
     }
 
-    override fun getAllSongsFromMediaStore(): Flow<List<SongSongsDomainModel>> {
+    override fun getAllSongsFromMediaStore(): Flow<List<SongSongsDomainModel.Entity>> {
 
-        return songsLocalDatasource.getAllSongsOnDevice().map { songs ->
-            songs.map { it.toSongSongsDomainModel() }
+        return mediaStoreLocalDatasource.getAllSongsOnDevice().map { songs ->
+            songs.map { it.toSongSongsDomainModelInfo() }
         }
     }
 }

@@ -1,31 +1,33 @@
 package com.example.features.playlists.presentation.mappers
 
-import com.example.core.common.values.FAVORITES_NAME
 import com.example.core.ui.grid.model.GridItem
 import com.example.core.ui.model.SongInfoUIModel
 import com.example.features.musicsource.domain.models.SongMusicSourceDomainModel
 import com.example.features.playlists.domain.models.PlaylistPlaylistsDomainModel
-import com.example.features.playlists.domain.models.SongPlaylistsDomainModel
 import com.example.features.playlists.presentation.models.PlaylistPlaylistsPresentationModel
 import com.example.features.playlists.presentation.models.SongPlaylistsPresentationModel
+import com.example.features.songs.domain.model.SongSongsDomainModel
 
-fun PlaylistPlaylistsDomainModel.toPlaylistPlaylistsPresentationModel(): PlaylistPlaylistsPresentationModel {
+fun PlaylistPlaylistsDomainModel.toPlaylistPlaylistsPresentationModel(songs: List<SongPlaylistsPresentationModel>): PlaylistPlaylistsPresentationModel {
 
     return PlaylistPlaylistsPresentationModel(
         id = this.id,
+        albumId = songs.firstOrNull()?.albumId?: -1L,
         label = this.label,
-        songs = this.songs.map { it.toSongPlaylistsPresentationModel() }
+        songs = songs
     )
 }
 
-fun SongPlaylistsDomainModel.toSongPlaylistsPresentationModel(): SongPlaylistsPresentationModel {
+fun SongSongsDomainModel.Info.toSongPlaylistsPresentationModel(playlistId: Long): SongPlaylistsPresentationModel {
 
     return SongPlaylistsPresentationModel(
         id = this.id,
-        playlistId = this.playlistId,
-        displayName = this.displayName,
+        msId = this.msId,
+        albumId = this.albumId,
+        playlistId = playlistId,
+        displayName = this.name,
         duration = this.duration,
-        author = this.author
+        artist = this.artist
     )
 }
 
@@ -39,10 +41,11 @@ fun SongPlaylistsPresentationModel.toSongMusicSourceDomainModel(): SongMusicSour
 fun SongPlaylistsPresentationModel.toSongInfoUIModel(): SongInfoUIModel {
     
     return SongInfoUIModel(
-        id = this.id,
+        id = this.msId,
+        albumId = this.albumId,
         name = this.displayName,
         duration = this.duration,
-        artist = this.author
+        artist = this.artist
     )
 }
 
@@ -54,8 +57,9 @@ fun PlaylistPlaylistsPresentationModel.toGridItem(
 
     return GridItem.Item(
         action = action,
-        action1 = action1,
+        actionAll = action1,
         itemId = this.id,
+        albumId = this.albumId,
         label = label
     )
 }

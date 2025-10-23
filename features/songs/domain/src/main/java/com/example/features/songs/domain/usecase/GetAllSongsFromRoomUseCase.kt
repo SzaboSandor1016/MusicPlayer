@@ -8,8 +8,8 @@ class GetAllSongsFromRoomUseCase(
     private val songsRepository: SongsRepository
 ) {
 
-    operator fun invoke(): Flow<List<SongSongsDomainModel>> {
+    operator fun invoke(): Flow<List<SongSongsDomainModel.Info>> {
 
-        return songsRepository.getAllSongsFromRoom()
+        return songsRepository.getAllSongsInfoFromRoom()
     }
 }

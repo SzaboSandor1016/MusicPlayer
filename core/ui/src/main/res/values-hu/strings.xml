@@ -25,5 +25,13 @@
     <string name="delete_playlist">Lejátszási lista törlése</string>
     <string name="all_songs">Összes dal</string>
     <string name="playlists">Lejátszási listák</string>
-    <string name="equalizer_on_off">Hangkeverő be/ki</string>
+    <string name="equalizer_on_off">Hangkeverő</string>
+    <string name="artists">Előadók</string>
+    <string name="albums">Albumok</string>
+    <string name="genres">Műfajok</string>
+    <string name="artist_songs">Az előadó művei</string>
+    <string name="artist_albums">Az előadó albumai</string>
+    <string name="unknown_album">Ismeretlen album</string>
+    <string name="unknown_genre">Ismeretlen műfaj</string>
+    <string name="unknown">Ismeretlen</string>
 </resources>

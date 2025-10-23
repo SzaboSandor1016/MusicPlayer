@@ -10,13 +10,15 @@ class InsertPlaylistSongUseCase(
 
     suspend operator fun invoke(playlistId: Long, songId: Long) {
 
-        val playlist = playlistsRepository.getPlaylistById(playlistId).first()
+        //val playlist = playlistsRepository.getPlaylistById(playlistId).first()
+
+        val playlistSongs = playlistsRepository.getPlaylistSongsByPlaylistId(playlistId).first()
 
         playlistsRepository.insertPlaylistSong(
             playlistSong = PlaylistSongPlaylistsDomainModel(
                 playlistId = playlistId,
                 songId = songId,
-                order = playlist.songs.size + 1
+                order = playlistSongs.size + 1
             )
         )
     }

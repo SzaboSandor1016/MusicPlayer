@@ -2,6 +2,8 @@ package com.example.features.songs.presentation.models
 
 data class SongSongsPresentationModel(
     val id: Long,
+    val albumId: Long,
+    val msId: Long,
     val name: String,
     val duration: Int,
     val author: String
