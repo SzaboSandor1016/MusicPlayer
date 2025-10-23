@@ -68,6 +68,7 @@ class SongDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testSongDao.insertSongs(listOf(testSong))
@@ -88,6 +89,7 @@ class SongDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testSongDao.insertSongs(listOf(existing))
@@ -101,6 +103,7 @@ class SongDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         assertFails { testSongDao.insertSongs(listOf(duplicate)) }
@@ -125,6 +128,7 @@ class SongDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testSongDao.insertSongs(listOf(testSong))
@@ -157,6 +161,7 @@ class SongDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testSongDao.insertSongs(listOf(testSong))
@@ -170,6 +175,7 @@ class SongDaoTest {
             genreId = 0L,
             dateAdded = 0L,
             msId = 1L,
+            key = "test/tes1|10_10_.mp3"
         )
 
         testSongDao.updateSongs(listOf(updated))
@@ -198,6 +204,7 @@ class SongDaoTest {
                 genreId = 0L,
                 dateAdded = 0L,
                 msId = 1L,
+                key = "test/tes1|10_10_.mp3"
             ),
             SongEntity(
                 displayName = "test2",
@@ -207,6 +214,7 @@ class SongDaoTest {
                 genreId = 0L,
                 dateAdded = 0L,
                 msId = 2L,
+                key = "test/tes1|10_10_.mp3"
             )
         )
 
